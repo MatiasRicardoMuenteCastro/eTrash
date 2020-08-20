@@ -50,7 +50,7 @@ const LoadingSignUp = () => {
 			
 		})
 		.catch(function(error){
-			console.log(error);
+			console.log(error.status);
 		})
 	}
 
@@ -103,9 +103,13 @@ const LoadingSignUp = () => {
 				id: response.data.id,
 				token: response.data.token
 			});
+
+			
 		})
 		.catch(function(error){
-			console.log(error);
+			navigation.navigate('Avatar', {
+				error: error.response.data.error
+			});
 		})
 	}
 
