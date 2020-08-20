@@ -4,9 +4,10 @@ import {
 	Text,
 	Animated,
 	TouchableOpacity,
-	StyleSheet,
-	Switch
+	StyleSheet
 } from 'react-native';
+
+import Checkbox from '@react-native-community/checkbox';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -22,8 +23,8 @@ const SwitchCollector = () => {
 	const [centralViewOpacity] = useState(new Animated.Value(0));
 	const [footerAnim] = useState(new Animated.ValueXY({x: 0, y: 100}));
 	const [footerOpacity] = useState(new Animated.Value(0)); 
-	const [collector, setCollector] = useState();
-	const changeCollectorValue = () => setCollector(previusCollector => !previusCollector);
+	const [collectorTrue, setCollectorTrue] = useState();
+	const [collectorFalse, setCollectorFalse] = useState();
 
 	const navigation = useNavigation();
 	const route = useRoute();
@@ -71,22 +72,42 @@ const SwitchCollector = () => {
 				<FontAwesomeIcon style={styles.iconTitle} icon={ faBuilding } size={25} />
 				<Text style={styles.text}>Empresa Coletora</Text>
 				<Text style={styles.question}>Sua empresa é coletora?</Text>
-				<Switch 
-					trackColor={{ false: 'gray', true: '#38c172'}}
-					thumbColor={collector ? 'black': '#38c172'}
-					value={collector}
-					onValueChange={() => changeCollectorValue()} 
-					onChange={() => console.log(collector)}
-
-
-				/>
+				
+				<View style={styles.checkView}> 
+					<Checkbox 
+						value={collectorTrue}
+						onValueChange={(newValue) => setCollectorTrue(newValue)}
+						tintColors={{true: '#38c172', false: 'black'}}
+					/>
+					<Text style={styles.trueText}>Sim</Text>
+					<Checkbox 
+						value={collectorFalse}
+						onValueChange={(newValue) => setCollectorFalse(newValue)}
+						tintColors={{true: '#38c172', false: 'black'}}
+					/>
+					<Text style={styles.falseText}>Não</Text>
+				</View>
 				
 					<TouchableOpacity style={styles.nextButton} 
 					onPress={() => {			
-					if(street != null && street != ''){
+					if(collectorFalse == true && collectorTrue != true){
 						navigation.navigate('LoadingSignUp', {
 							cnpj: route.params.cnpj,
 							passwordInput: route.params.passwordInput,
+							collector: false,
+							country: route.params.country,
+							city: route.params.city,
+							region: route.params.region,
+							latitude: route.params.latitude,
+							longitude: route.params.longitude,
+							user: 'company'
+						});
+					}
+					if(collectorTrue == true && collectorFalse != true){
+						navigation.navigate('LoadingSignUp', {
+							cnpj: route.params.cnpj,
+							passwordInput: route.params.passwordInput,
+							collector: collectorTrue,
 							country: route.params.country,
 							city: route.params.city,
 							region: route.params.region,
@@ -178,6 +199,26 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 280,
 		borderBottomRightRadius: 280,
 		backgroundColor: '#ffffff'
+	},
+	checkView: {
+		marginRight: 250,
+		marginBottom: 70
+	},
+	trueText: {
+		color: 'black',
+		marginLeft: 50,
+		top: 0,
+		position: 'absolute',
+		marginTop: 5,
+		fontFamily: 'Roboto-Bold'
+	},
+	falseText: {
+		color: 'black',
+		marginLeft: 50,
+		top: 0,
+		position: 'absolute',
+		marginTop: 40,
+		fontFamily: 'Roboto-Bold'
 	},
 	text: {
 		fontSize: 20,
