@@ -28,7 +28,7 @@ const SignUpCompany = () => {
 	const [centralViewOpacity] = useState(new Animated.Value(0));
 	const [cnpj, setCnpj] = useState();
 	const [password, setPassword] = useState();
-	const [collector, setCollector] = useState();
+
 	
 
 	const input1 = useRef(null);
