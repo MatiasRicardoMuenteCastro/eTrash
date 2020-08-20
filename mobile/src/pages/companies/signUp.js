@@ -14,7 +14,7 @@ import { faArrowLeft,
 		 faLock,
 		 faBuilding } from '@fortawesome/free-solid-svg-icons';
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import api from '../../services/api';
 import ipApi from '../../services/ip-api';
 
@@ -29,14 +29,12 @@ const SignUpCompany = () => {
 	const [cnpj, setCnpj] = useState();
 	const [password, setPassword] = useState();
 	const [collector, setCollector] = useState();
-	const [country, setCountry] = useState();
-	const [city, setCity] = useState();
-	const [region, setRegion] = useState();
-	const [latitude, setLatitude] = useState();
-	const [longitude, setLongitude] = useState();
 	
+
 	const input1 = useRef(null);
 	const input2 = useRef(null);
+
+	const route = useRoute();
 
 	useEffect(() => {
 		Animated.parallel([
@@ -65,14 +63,6 @@ const SignUpCompany = () => {
 		]).start();
 	}, []);
 
-	const getLocalization = async () => {
-		const response = await ipApi.get('/json');
-		setCountry(response.data.country);
-		setCity(response.data.city);
-		setRegion(response.data.region);
-		setLatitude(response.data.lat);
-		setLongitude(response.data.lon);
-	}
 
 	return (
 		<KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -124,31 +114,17 @@ const SignUpCompany = () => {
 				/>
 				<FontAwesomeIcon style={styles.passwordIcon} icon={ faLock } size={20} />
 				<TouchableOpacity style={styles.nextButton} 
-				onPress={ async () => {				
+				onPress={() => {				
 					if(cnpj != null && password != null && cnpj != '' && password != ''){
-						await getLocalization();
-						await api.post('/companies/create', {
+						navigation.navigate('SwitchCollector', {
 							cnpj: cnpj,
 							passwordInput: password,
-							collector: collector,
-							country: country,
-							city: city, 
-							region: region,
-							latitude: latitude,
-							longitude: longitude,
-
-						})
-						.then(function(response){
-							navigation.navigate('Avatar', {
-					  			user: 'company',	
-					  			welcome: response.data.welcome,
-					  			id: response.data.id,
-					  			token: response.data.token
-					  		});
-						})
-						.catch(function(error){ 
-							console.log(error);
-						})
+							country: route.params.country,
+							city: route.params.city,
+							region: route.params.region,
+							latitude: route.params.latitude,
+							longitude: route.params.longitude
+						});
 					}
 					 
 				}}>
