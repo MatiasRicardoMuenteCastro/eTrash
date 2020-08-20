@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import ipApi from '../../services/ip-api';
 
 
 const SignOption = () => {
@@ -18,6 +19,11 @@ const SignOption = () => {
 	const [showTextCentral] = useState(new Animated.ValueXY({x: 0, y: 80}));
 	const [textCentralOpacity] = useState(new Animated.Value(0));
 	const [buttonAnim] = useState(new Animated.ValueXY({x: 0, y: 60}));
+	const [country, setCountry] = useState();
+	const [city, setCity] = useState();
+	const [region, setRegion] = useState();
+	const [latitude, setLatitude] = useState();
+	const [longitude, setLongitude] = useState();
 
 	useEffect(() => {
 		Animated.parallel([
@@ -61,6 +67,15 @@ const SignOption = () => {
 		]).start();
 	}, []);
 
+	useEffect( async () => {
+		const response = await ipApi.get('/json'); 
+	  	setCountry(response.data.country);
+	   	setCity(response.data.city);
+	    setRegion(response.data.region);
+	   	setLatitude(response.data.lat);
+	   	setLongitude(response.data.lon);	
+	}, []);
+
 	const navigation = useNavigation();
 
 	const centralTextStr = 'Descarte seu\nresíduo eletrônico\ne ajude o'; 
@@ -100,13 +115,29 @@ const SignOption = () => {
 				{ transform: [ { translateY: buttonAnim.y } ] }
 			]}>
 
-				<RectButton style={styles.signInButton} onPress={() => navigation.navigate('SignIn')}>
+				<RectButton style={styles.signInButton} onPress={() =>
+				 navigation.navigate('SignIn', {
+				 	country: country,
+				 	city: city,
+				 	region: region,
+				 	latitude: latitude,
+				 	longitude: longitude
+				 })}>
+
+
 					<View style={styles.buttonIconIn}>
 						<FontAwesomeIcon style={styles.iconIn} icon={ faSignInAlt } size={20} />
 					</View>
 					<Text style={styles.textButtonIn}>Entrar</Text>
 				</RectButton>
-				<RectButton style={styles.signUpButton} onPress={() => navigation.navigate('ChooseUser')}>
+				<RectButton style={styles.signUpButton} onPress={() => 
+				navigation.navigate('ChooseUser', {
+					country: country,
+					city: city,
+					region: region,
+					latitude: latitude,
+					longitude: longitude
+				})}>
 					<View style={styles.buttonIconUp}>
 						<FontAwesomeIcon style={styles.iconUp} icon={ faUserPlus }/>
 					</View>
