@@ -71,6 +71,7 @@ const LoadingSignUp = () => {
 
 		.then(function(response){
 			navigation.navigate('Avatar', {
+				user: 'discardPoint',
 				welcome: response.data.welcome,
 				token: response.data.token,
 				id: response.data.id
@@ -83,12 +84,37 @@ const LoadingSignUp = () => {
 
 	}
 
+	const createCompany = async () => {
+		await api.post('/companies/create', {
+			cnpj: route.params.cnpj,
+			passwordInput: route.params.passwordInput,
+			collector: route.params.collector,
+			country: route.params.country,
+			city: route.params.city,
+			region: route.params.region,
+			latitude: route.params.latitude,
+			longitude: route.params.longitude
+
+		})
+		.then(function(response){
+			navigation.navigate('Avatar', {
+				user: 'company',
+				welcome: response.data.welcome,
+				id: response.data.id,
+				token: response.data.token
+			});
+		})
+		.catch(function(error){
+			console.log(error);
+		})
+	}
+
 	useEffect( async () => {
 		if (route.params.user == 'user'){
 			await setTimeout(createUser, 2000);
 		}
 		if (route.params.user == 'company'){
-
+			await setTimeout(createCompany, 2000);
 		}
 		if (route.params.user == 'discardPoint') {
 			await setTimeout(createDiscardPoint, 2000);
