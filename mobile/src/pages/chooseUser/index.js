@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Animated, TouchableOpacity } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation, useRoute } from '@react-navigation/native'; 
 
 const ChooseUser = () => {
 
 	const navigation = useNavigation();
+	const route = useRoute();
 
 	const [imageHeaderOpacity] = useState(new Animated.Value(0));
 	const [showImageHeader] = useState(new Animated.ValueXY({x: 0, y: 80}));
@@ -102,7 +103,15 @@ const ChooseUser = () => {
 				 		transform: [ {translateY: showButtonA.y } ]
 				 }]}>
 				 	<TouchableOpacity 
-				 	style={styles.companyButton} onPress={() => navigation.navigate('SignUpCompany')}>
+				 	style={styles.companyButton} onPress={() => 
+				 		navigation.navigate('SignUpCompany', {
+				 			country: route.params.country,
+				 			city: route.params.city,
+				 			region: route.params.region,
+				 			latitude: route.params.latitude,
+				 			longitude: route.params.longitude
+				 		})}>
+				 		
 				 		<Image 
 				 		style={styles.buttonImage} 
 				 		source={require('../../assets/pictures/company.jpg')} />
@@ -114,7 +123,15 @@ const ChooseUser = () => {
 				 		opacity: opacityButtonB,
 				 		transform: [ {translateY: showButtonB.y } ]
 				 }]}>
-				 	<TouchableOpacity style={styles.pointButton} onPress={() => navigation.navigate('SignUpPoints')}>
+				 	<TouchableOpacity style={styles.pointButton} onPress={() => 
+				 		navigation.navigate('SignUpPoints', {
+				 			country: route.params.country,
+				 			city: route.params.city,
+				 			region: route.params.region,
+				 			latitude: route.params.latitude,
+				 			longitude: route.params.longitude
+				 		})}>
+				 		
 				 		<Image 
 				 		style={styles.buttonImage} 
 				 		source={require('../../assets/pictures/point.jpg')} />
@@ -126,7 +143,15 @@ const ChooseUser = () => {
 				 		opacity: opacityButtonC,
 				 		transform: [ {translateY: showButtonC.y } ]
 				 }]}>
-				 	<TouchableOpacity style={styles.userButton} onPress={() => navigation.navigate('SignUpUser')}>
+				 	<TouchableOpacity style={styles.userButton} onPress={() => 
+				 		navigation.navigate('SignUpUser', {
+				 			country: route.params.country,
+				 			city: route.params.city,
+				 			region: route.params.region,
+				 			latitude: route.params.latitude,
+				 			longitude: route.params.longitude
+				 		})}>
+				 		
 				 		<Image 
 				 		style={styles.buttonImage} 
 				 		source={require('../../assets/pictures/userImage.jpg')} />
