@@ -7,7 +7,7 @@ const LoadingSignUp = () => {
 	
 	const route = useRoute();
 	const navigation = useNavigation();
-	console.log(route.params);
+	
 
 	const [loadingViewOpacity] = useState(new Animated.Value(0));
 	const [loadingViewAnim] = useState(new Animated.ValueXY({x: 0, y: 80}));
@@ -107,8 +107,14 @@ const LoadingSignUp = () => {
 			
 		})
 		.catch(function(error){
-			navigation.navigate('Avatar', {
-				error: error.response.data.error
+			navigation.navigate('InvalidCnpj', {
+				error: error.response.data.error,
+				country: route.params.country,
+				city: route.params.city,
+				region: route.params.region,
+				latitude: route.params.latitude,
+				longitude: route.params.longitude
+
 			});
 		})
 	}
