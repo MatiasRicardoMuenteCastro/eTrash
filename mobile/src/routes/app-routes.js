@@ -15,6 +15,7 @@ import SignUpUser from '../pages/users/signUp';
 import UserEmail from '../pages/users/email';
 import LoadingSignUp from '../pages/loadingPages/loadingSignUp';
 import SwitchCollector from '../pages/companies/switchCollector';
+import InvalidCnpj from '../pages/companies/invalidCnpj';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -52,6 +53,7 @@ const Routes = () => {
 				<AppStack.Screen name="UserEmail" component={UserEmail} />
 				<AppStack.Screen name="LoadingSignUp" component={LoadingSignUp} />
 				<AppStack.Screen name="SwitchCollector" component={SwitchCollector} />
+				<AppStack.Screen name="InvalidCnpj" component={InvalidCnpj} />
 			</AppStack.Navigator>
 		</NavigationContainer>
 	);
