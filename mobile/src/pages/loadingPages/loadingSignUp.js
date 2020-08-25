@@ -101,7 +101,13 @@ const LoadingSignUp = () => {
 				user: 'company',
 				welcome: response.data.welcome,
 				id: response.data.id,
-				token: response.data.token
+				token: response.data.token,
+				collector: route.params.collector,
+				country: route.params.country,
+				city: route.params.city,
+				region: route.params.region,
+				welcome: response.data.welcome,
+
 			});
 
 			
@@ -109,6 +115,8 @@ const LoadingSignUp = () => {
 		.catch(function(error){
 			navigation.navigate('InvalidCnpj', {
 				error: error.response.data.error,
+				passwordInput: route.params.passwordInput,
+				collector: route.params.collector,
 				country: route.params.country,
 				city: route.params.city,
 				region: route.params.region,
