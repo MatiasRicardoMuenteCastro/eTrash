@@ -187,7 +187,7 @@ module.exports = {
 		await connection('uploads').where('point_id', pointDB.id)
 		.update({ imgName: imgName, size: size, key: key });
 
-		return res.json({sucess: 'Avartar atualizado'}); 
+		return res.json({sucess: 'Avatar atualizado'}); 
 		
 	}
 
