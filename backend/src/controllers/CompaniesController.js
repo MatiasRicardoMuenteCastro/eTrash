@@ -92,9 +92,13 @@ module.exports = {
         });
 
         return response.json({
-            welcome: `Bem vindo(a) ${name}`,
+            welcome: `${name}`,
             id: id,
-            token: generateToken({id: id})
+            token: generateToken({id: id}),
+            email: email,
+            name: name,
+            phone: neightborhood,
+            activity: activity
         });
     
     },
