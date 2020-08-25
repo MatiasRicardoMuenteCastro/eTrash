@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
 	welcome: {
 		color: 'white',
 		fontFamily: 'Roboto-Bold',
-		fontSize: 20,
+		fontSize: 18,
 		marginTop: 20
 	}
 });
