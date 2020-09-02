@@ -104,7 +104,7 @@ const UserEmail = () => {
 					style={styles.emailInput}
 					onChangeText={text => setEmail(text)}
 					value={email}
-					placeholder="Seu melhor Email"
+					placeholder="Seu melhor e-mail"
 					keyboardType="email-address"
 					placeholderTextColor="black"
 					autoCapitalize={'none'}
