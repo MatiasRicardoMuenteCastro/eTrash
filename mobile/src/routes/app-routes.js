@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Slider from '../pages/slider/index';
 import SignOption from '../pages/signOption/index';
 import ChooseUser from '../pages/chooseUser/index';
 import SignIn from '../pages/signIn/index';
 import SignUpPoints from '../pages/discardPoints/signUp';
-import Anddress from '../pages/discardPoints/anddress';
+import Address from '../pages/discardPoints/address';
 import Avatar from '../pages/avatar-upload/index';
 import DiscardMain from '../pages/discardPoints/discards';
 import SignUpCompany from '../pages/companies/signUp';
@@ -17,23 +16,14 @@ import LoadingSignUp from '../pages/loadingPages/loadingSignUp';
 import SwitchCollector from '../pages/companies/switchCollector';
 import InvalidCnpj from '../pages/companies/invalidCnpj';
 import DiscardCompany from '../pages/companies/discards';
+import UserTypeSignIn from '../pages/signIn/userTypeSignIn';
 
-import AsyncStorage from '@react-native-community/async-storage';
 
 const AppStack = createStackNavigator();
 
-const Routes = () => {
-
-	useEffect( async () => {
-		try {
-			await AsyncStorage.clear();
-		}catch (e) {
-			console.log(e);
-		}
-	}, []);
+const AppRoutes = () => {
 
 	return (
-		<NavigationContainer>
 			<AppStack.Navigator 
 				headerMode="none"
 				screenOptions={{
@@ -41,12 +31,11 @@ const Routes = () => {
 						backgroundColor: '#ffffff'
 					}
 				}}>
-				<AppStack.Screen name="Slider" component={Slider} />
 				<AppStack.Screen name="SignOption" component={SignOption} />
 				<AppStack.Screen name="ChooseUser" component={ChooseUser} /> 
 				<AppStack.Screen name="SignIn" component={SignIn} />
 				<AppStack.Screen name="SignUpPoints" component={SignUpPoints} />
-				<AppStack.Screen name="Anddress" component={Anddress} />
+				<AppStack.Screen name="Address" component={Address} />
 				<AppStack.Screen name="Avatar" component={Avatar} />
 				<AppStack.Screen name="DiscardMain" component={DiscardMain} />
 				<AppStack.Screen name="SignUpCompany" component={SignUpCompany} />
@@ -56,10 +45,10 @@ const Routes = () => {
 				<AppStack.Screen name="SwitchCollector" component={SwitchCollector} />
 				<AppStack.Screen name="InvalidCnpj" component={InvalidCnpj} />
 				<AppStack.Screen name="DiscardCompany" component={DiscardCompany} />
+				<AppStack.Screen name="UserTypeSignIn" component={UserTypeSignIn} />
 			</AppStack.Navigator>
-		</NavigationContainer>
 	);
 
 }
 
-export default Routes;
+export default AppRoutes;
