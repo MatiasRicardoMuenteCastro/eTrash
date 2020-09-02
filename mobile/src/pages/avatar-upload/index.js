@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View,  StyleSheet, Animated, Text, StatusBar } from 'react-native';
 
 import { useRoute, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+
+
 
 const Avatar = () => {
 
@@ -14,17 +16,6 @@ const Avatar = () => {
 	const [endAnim] = useState(new Animated.Value(1));
 	const [hideAnim] = useState(new Animated.ValueXY({x: 0, y: 0}));
 
-	useEffect( async () => {
-		try {
-		   await AsyncStorage.setItem('@id', route.params.id);
-		   await AsyncStorage.setItem('@token', route.params.token);
-		   await AsyncStorage.setItem('@user', route.params.user);
-
-		}catch(e){
-			console.log(e);
-		}
-
-	}, []);
 
 	useEffect(() => {
 		Animated.timing(AnimProgress, {
@@ -53,7 +44,15 @@ const Avatar = () => {
 		setTimeout(hideAnimation, 3000);
 	}, []);
 
-	
+	useEffect( async () => {
+		try {
+			await AsyncStorage.setItem('@user', route.params.user);
+			await AsyncStorage.setItem('@id', route.params.id);
+			await AsyncStorage.setItem('@token', route.params.token);
+		}catch(e){
+			console.log(e);
+		}
+	}, []);
 
 	return(
 		<View style={styles.container}>
