@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { ActivityIndicator, StatusBar, View, Text, StyleSheet, Animated } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native'; 
 import api from '../../services/api';
@@ -27,33 +27,8 @@ const LoadingSignUp = () => {
 		]).start();
 	}, []);
 
+	
  
-	const createUser = async () => {
-		await api.post('/users/create', {
-			name: route.params.name,
-			email: route.params.email,
-			passwordInput: route.params.password,
-			country: route.params.country,
-			city: route.params.city,
-			region: route.params.region,
-			latitude: route.params.latitude,
-			longitude: route.params.longitude
-
-		})
-		.then(function(response){
-			navigation.navigate('Avatar', {
-				user: 'user',
-				welcome: response.data.welcome,
-				id: response.data.id,
-				token: response.data.token
-			});
-			
-		})
-		.catch(function(error){
-			console.log(error.status);
-		})
-	}
-
 	const createDiscardPoint = async () => {
 		await api.post('/point/create', {
 			name: route.params.name,
@@ -126,6 +101,37 @@ const LoadingSignUp = () => {
 			});
 		})
 	}
+
+	const createUser = async () => {
+		await api.post('/users/create', {
+			name: route.params.name,
+			email: route.params.email, 
+			passwordInput: route.params.password,
+			country: route.params.country,
+			city: route.params.city,
+			region: route.params.region,
+			latitude: route.params.latitude,
+			longitude: route.params.longitude
+		}).then(function(response){
+			navigation.navigate('Avatar', {
+				user: 'user',
+				welcome: response.data.welcome,
+				id: response.data.id,
+				token: response.data.token,
+				name: response.data.name,
+				email: response.data.email,
+				country: route.params.country,
+				city: route.params.city,
+				region: route.params.region,
+				latitude: route.params.latitude,
+				longitude: route.params.longitude
+			});
+		})
+		.catch(function(error){
+			console.log(error);
+		});
+	}
+
 
 	useEffect( async () => {
 		if (route.params.user == 'user'){
