@@ -97,7 +97,7 @@ module.exports = {
             token: generateToken({id: id}),
             email: email,
             name: name,
-            phone: neightborhood,
+            phone: phone,
             activity: activity
         });
     
