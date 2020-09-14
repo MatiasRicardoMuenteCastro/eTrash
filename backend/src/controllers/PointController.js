@@ -67,7 +67,9 @@ module.exports = {
         return response.json({
             welcome: `Bem-vindo(a) Ponto de Coleta ${name}`,
             id: id,
-            token: generateToken({id: id})
+            token: generateToken({id: id}),
+            name: name,
+            discarts: discarts
         });
 
     },
