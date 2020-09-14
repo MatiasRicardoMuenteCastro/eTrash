@@ -34,9 +34,12 @@ routesAuth.post('/point/upload', multer(MulterPoints).single('file'), PointContr
 routesAuth.get('/point', PointController.index);
 routesAuth.delete('/point/delete', PointController.delete);
 
-routesAuth.put('/discarts/user', DiscartController.userCreate);
-routesAuth.put('/discarts/company', DiscartController.companyCreate);
-routesAuth.put('/discarts/point', DiscartController.pointCreate);
+routesAuth.put('/discarts/user/update', DiscartController.userUpdate);
+routesAuth.put('/discarts/company/update', DiscartController.companyUpdate);
+routesAuth.put('/discarts/point/update', DiscartController.pointUpdate);
+routesAuth.get('/discarts/user', DiscartController.userGet);
+routesAuth.get('/discarts/company', DiscartController.companyGet);
+routesAuth.get('/discarts/points/', DiscartController.pointGet);
 routesAuth.get('/discarts/points', DiscartController.searchPointForUser);
 
 routesAuth.get('/profile/user', ProfileController.userProfile);
