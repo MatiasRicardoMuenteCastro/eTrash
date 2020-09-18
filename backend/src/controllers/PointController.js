@@ -46,6 +46,13 @@ module.exports = {
               region,
               latitude,
               longitude } = request.body;
+            
+        const nameDB = await connection('discarts_points').where('name',name).select('name')
+        .first();
+
+        if(nameDB){
+            return response.status(401).json({error:"Nome de ponto já está cadastrado"});
+        }
 
         const password = hash(passwordInput);
         const id = crypto.randomBytes(5).toString("HEX");
@@ -96,14 +103,16 @@ module.exports = {
         if(oldPointKey){
             await fs.unlink(`./temp/uploads/points/${oldPointKey.key}`, function(err){
 			     if(err) throw err;
-		    });
-        }
-        const imageID = await connection('uploads').select('id').where('point_id',point_id).first();
+            });
+            
+            const imageID = await connection('uploads').select('id').where('point_id',point_id).first();
 
-        await connection('uploads').where('id',imageID.id).delete();
+            await connection('uploads').where('id',imageID.id).delete();
+        }
+        
         await connection('discarts_points').where('id', point_id).delete();
         
-        return response.json({sucess: 'Ponto deletado com sucesso!'});
+        return response.send();
     },
     
     upload: async(request, response) => {
