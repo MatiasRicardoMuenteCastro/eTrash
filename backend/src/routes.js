@@ -13,13 +13,22 @@ routes.post('/users/create', UserController.create);
 
 routes.post('/session', SessionController.userCreate);
 
-routes.post('/session/companies', SessionController.companyCreate);
+routes.post('/users/password/recovery',UserController.recovery);
 
-routes.post('/session/point', SessionController.pointCreate);
+routes.put('/users/password/reset',UserController.reset);
 
 routes.post('/companies/create',CompaniesController.create);
 
+routes.post('/session/companies', SessionController.companyCreate);
+
+routes.post('/companies/password/recovery',CompaniesController.recovery);
+
+routes.put('/companies/password/reset',CompaniesController.reset);
+
 routes.post('/point/create',PointController.create);
+
+routes.post('/session/point', SessionController.pointCreate);
+
 
 
 module.exports = routes;
