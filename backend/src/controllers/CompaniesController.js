@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const mailer = require('../modules/mailer')
 
 function hash(password){
     const saltRounds = 12;
@@ -69,6 +70,14 @@ module.exports = {
         }
 
         const name = dataCNPJ.data.nome;
+
+        const nameDB = await connection('companies').where('name',name).select('name')
+        .first();
+
+        if(nameDB){
+            return response.status(401).json({error:"Companhia já registrada no banco de dados."});
+        }
+
         const email = dataCNPJ.data.email;
         const activity = dataCNPJ.data.atividade_principal[0].text;
         const phone = dataCNPJ.data.telefone;
@@ -239,7 +248,83 @@ module.exports = {
 
         return response.status(200).send('Agendamento deletado com sucesso!');
         
-    }
+    },
+    recovery: async(req,res) =>{
+		const {email} = req.body;
+		try{
+			const findEmail = await connection('companies').where('email',email).select('name')
+			.first();
+
+			if(!findEmail)
+				return res.status(400).json({error: "Companhia não encontrada."});
+
+			const token = crypto.randomBytes(20).toString('HEX');
+
+			const now = new Date();
+			now.setHours(now.getHours()+1);
+
+			await connection('companies').where('email',email).update({
+				password_reset_token: token,
+				password_reset_expires: now
+			});
+
+			mailer.sendMail({
+				to: email,
+				from:'etrash@outlook.com.br',
+				template:'auth/forgot_password',
+				context: {token}
+			},(err)=>{
+				if(err){
+					return res.status(400).json({error: "Erro ao enviar o email."})
+				}
+				return res.send();
+			});
+
+		}catch(err){
+			res.status(400).json({error: "Erro ao recuperar a senha, tente de novo."});
+		}
+	},
+	reset: async(req,res)=>{
+		const {email,token,password} = req.body;
+		try{
+			
+			const findEmail = await connection('companies').where('email',email).select('email')
+			.first();
+
+			if(!findEmail){
+				return res.status(400).json({error: "Email não encontrado"});
+			}
+
+			const findResetToken = await connection('companies').where('email',email).select('password_reset_token')
+			.first();
+
+			if(token !== findResetToken.password_reset_token){
+				return res.status(400).json({error:"Chave para resetar a senha é inválida."});
+			}
+
+			const findResetExpires = await connection('companies').where('email',email).select('password_reset_expires')
+			.first();
+
+			const now = new Date();
+
+			if(now > findResetExpires){
+				return res.status(400).json({error:"Sua chave para resetar a senha expirou, pegue uma nova."});
+			}
+
+			const passwordCrypt = hash(password);
+
+			await connection('companies').where('email',email).update({
+				password: passwordCrypt,
+				password_reset_token: null,
+				password_reset_expires: null
+            });
+
+			return res.send("Senha resetada com sucesso.");
+
+		}catch(err){
+			return res.status(400).json({error:"Erro ao resetar a senha."});
+		}
+	}
      
 };
     
