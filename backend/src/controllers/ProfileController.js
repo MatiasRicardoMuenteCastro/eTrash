@@ -51,10 +51,14 @@ module.exports = {
 		const oldAvatarKey = await connection('uploads').where('user_id', userId)
 		.select('key').first();
 
-		await fs.unlink(`./temp/uploads/users/${oldAvatarKey.key}`, function(err){
-			if(err) throw err;
-		});
-
+		try{
+			await fs.unlink(`./temp/uploads/users/${oldAvatarKey.key}`, function(err){
+				if(err) throw err;
+			});
+		}catch{
+			return res.json({error:"Erro ao atualizar a imagem."});
+		}
+		
 		const imgName = req.file.originalname;
 		const size = req.file.size;
 		const key = req.file.filename;
@@ -115,9 +119,13 @@ module.exports = {
 		const oldCompanyKey = await connection('uploads').where('company_id', companyId)
 		.select('key').first();
 
-		fs.unlink(`./temp/uploads/companies/${oldCompanyKey.key}`, function(err){
-			if(err) throw err;
-		});
+			try{
+				fs.unlink(`./temp/uploads/companies/${oldCompanyKey.key}`, function(err){
+					if(err) throw err;
+				});
+			}catch{
+				return res.status(401).json({error:"Erro ao atualizar a imagem."});
+			}
 
 		const imgName = req.file.originalname;
 		const size = req.file.size;
@@ -176,9 +184,14 @@ module.exports = {
 		const oldPointAvatarKey = await connection('uploads').where('point_id', pointId)
 		.select('key').first();
 
-		await fs.unlink(`./temp/uploads/points/${oldPointAvatarKey.key}`, function(err){
-			if(err) throw err;
-		});
+		try{
+			await fs.unlink(`./temp/uploads/points/${oldPointAvatarKey.key}`, function(err){
+				if(err) throw err;
+			});
+		}
+		catch{
+			return res.status(401).json({error:"Erro ao atualizar a imagem."});
+		}
 
 
 		const imgName = req.file.originalname;
