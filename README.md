@@ -1,5 +1,5 @@
 <p align="center">
-  # <img src="https://user-images.githubusercontent.com/59677362/85182021-d98fbd00-b25d-11ea-9dee-9da6ff65f976.jpg" width=150 />-Trash
+ 
 </p>
 
 <p align="center">
