@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/59677362/85182021-d98fbd00-b25d-11ea-9dee-9da6ff65f976.jpg" width=400 /> 
+  <img src="https://user-images.githubusercontent.com/59677362/93814871-885fe280-fc2b-11ea-8d8d-2ffe878504b6.png" width=400 />
 </p>
-
-# `E-Trash`
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/59677362/90438223-04559080-e0aa-11ea-88bd-86f3c49bdfaa.png" width=200 />
@@ -14,6 +12,7 @@
   <img src="https://user-images.githubusercontent.com/59677362/90439448-f6a10a80-e0ab-11ea-9d57-385018e1474b.png" width=200 />
 </p>
 
+# About this project
 
 #### E-Trash is a mobile application that has the objective on helping users and companies how to discart their electronic trash, using  geolocalization and artificial intelligence based on IBM Watson, it's possible to help people or company in guidance required to promote the sustanble discart of their electronic trash throughout companies that colect this material or specific colecting points.    
 
@@ -30,7 +29,7 @@
 # `API BASE URL` <img src="https://user-images.githubusercontent.com/59677362/83289220-1f0b1e00-a1bb-11ea-8abe-404381063a99.png" width=60/>
 
 
-#### >> `https://e-trash.herokuapp.com/` 
+#### >> `https://e-trash-backend.herokuapp.com/` 
 
 # `Libraries and Frameworks Back-End` >> <img src="https://user-images.githubusercontent.com/59677362/81249040-0fe9e380-8ff4-11ea-885f-50de3722ecb9.jpeg" width=40 height=40 />
 
