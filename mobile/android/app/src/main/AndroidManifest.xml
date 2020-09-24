@@ -11,7 +11,9 @@
       android:icon="@drawable/icon"
       android:roundIcon="@drawable/icon"
       android:allowBackup="false"
-      android:theme="@style/AppTheme">
+      android:theme="@style/AppTheme"
+      android:usesCleartextTraffic="true"
+      >
       <activity
         android:name=".MainActivity"
         android:screenOrientation="portrait"
