@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View,  
-		 StyleSheet, 
-		 Animated, 
-		 Text, 
-		 StatusBar, 
-		 TouchableOpacity,
-		 Image,
-		 Platform } from 'react-native';
+	 StyleSheet, 
+	 Animated, 
+	 Text, 
+	 StatusBar, 
+	 TouchableOpacity,
+	 Image,
+	 Platform } from 'react-native';
 
 import { useRoute, useNavigation } from '@react-navigation/native';
 
