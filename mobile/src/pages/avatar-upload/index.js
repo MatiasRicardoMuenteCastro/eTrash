@@ -5,7 +5,8 @@ import { View,
 		 Text, 
 		 StatusBar, 
 		 TouchableOpacity,
-		 Image } from 'react-native';
+		 Image,
+		 Platform } from 'react-native';
 
 import { useRoute, useNavigation } from '@react-navigation/native';
 
@@ -107,27 +108,37 @@ const Avatar = () => {
 	}
 
 
-	async function uploadImage(){
-		const formImage = new FormData();
+	const uploadImage = async () => {
 
-		formImage.append('image', {
-			fileName: avatar.filename,
-			fileSize: avatar.fileSize,
-			type: avatar.type,
-			uri: avatar.uri,
+		try{ 
+			
+			const formImage = new FormData();
 
-
-		})
-
-		if(route.params.user == 'user'){	
-			await api.post('/users/upload', formImage, {
-				headers: {
-					identification: route.params.id
-				}
+			formImage.append('file', {
+				name: avatar.fileName,
+				fileSize: avatar.fileSize,
+				uri: avatar.uri,
+				type: avatar.type
 			});
+
+			console.log(formImage._parts[0]);
+
+			if(route.params.user == 'user'){	
+				const response = await api.post('/users/upload', formImage, {
+					headers: {
+						'authentication': `Bearer ${route.params.token}`,
+						'authorization': route.params.id,
+						'Content-Type': 'multipart/form-data'
+					}
+				})
+
+				console.log(response);
+
+			}
+		}catch(error){
+			console.log(error.response.data);
 		}
 	}
-
 
 
 	return(
@@ -165,7 +176,7 @@ const Avatar = () => {
 					<Text style={styles.addText}>Adicionar</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity style={[styles.readyButton, readyButtonDisplay]} onPress={async () => await uploadImage()}>
+				<TouchableOpacity style={[styles.readyButton, readyButtonDisplay]} onPress={uploadImage}>
 					<Text style={styles.readyText}>Pronto</Text>
 				</TouchableOpacity>
 
