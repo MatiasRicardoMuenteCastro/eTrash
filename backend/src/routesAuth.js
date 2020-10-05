@@ -9,6 +9,8 @@ const PointController = require('./controllers/PointController');
 const DiscartController = require('./controllers/DiscartController');
 const ProfileController = require('./controllers/ProfileController');
 const botController = require('./controllers/botController');
+const noticesController = require('./controllers/NoticesController');
+
 
 const authMiddleware = require('./middlewares/auth');
 const MulterUsers = require('./config/MulterUsers');
@@ -22,6 +24,8 @@ routesAuth.use(morgan('dev'));
 routesAuth.post('/users/upload', multer(MulterUsers).single('file'), UserController.upload);
 routesAuth.get('/users', UserController.index);
 routesAuth.delete('/users/delete', UserController.delete);
+routesAuth.get('/users/discards', UserController.getUserDiscards);
+
 
 routesAuth.post('/companies/upload', multer(MulterCompanies).single('file'), CompaniesController.upload);
 routesAuth.get('/companies', CompaniesController.index);
@@ -49,6 +53,9 @@ routesAuth.post('/profile/company/avatar', multer(MulterCompanies).single('file'
 routesAuth.get('/profile/point', ProfileController.pointProfile);
 routesAuth.post('/profile/point/avatar', multer(MulterPoints).single('file'), ProfileController.updatePointAvatar);
 
+
 routesAuth.post('/watson/send', botController.sendChat);
+routesAuth.get('/notices/get', noticesController.get);
+
 
 module.exports = routesAuth;

@@ -5,6 +5,8 @@ exports.up = function(knex) {
 		table.string('name').notNullable();
 		table.string('email').notNullable();
 		table.string('password').notNullable();
+		table.string('password_reset_token');
+		table.date('password_reset_expires');
 		table.specificType('discarts', 'text[]');
 		table.string('activity').notNullable();
 		table.boolean('collector').notNullable();

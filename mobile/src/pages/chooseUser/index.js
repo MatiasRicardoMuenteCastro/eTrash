@@ -82,6 +82,7 @@ const ChooseUser = () => {
 	}, []);
 
 
+
 	return (
 		<View style={styles.container}>
 			<Animated.Image 
@@ -103,14 +104,7 @@ const ChooseUser = () => {
 				 		transform: [ {translateY: showButtonA.y } ]
 				 }]}>
 				 	<TouchableOpacity 
-				 	style={styles.companyButton} onPress={() => 
-				 		navigation.navigate('SignUpCompany', {
-				 			country: route.params.country,
-				 			city: route.params.city,
-				 			region: route.params.region,
-				 			latitude: route.params.latitude,
-				 			longitude: route.params.longitude
-				 		})}>
+				 	style={styles.companyButton} onPress={() => navigation.navigate('SignUpCompany')}>
 				 		
 				 		<Image 
 				 		style={styles.buttonImage} 
@@ -123,14 +117,7 @@ const ChooseUser = () => {
 				 		opacity: opacityButtonB,
 				 		transform: [ {translateY: showButtonB.y } ]
 				 }]}>
-				 	<TouchableOpacity style={styles.pointButton} onPress={() => 
-				 		navigation.navigate('SignUpPoints', {
-				 			country: route.params.country,
-				 			city: route.params.city,
-				 			region: route.params.region,
-				 			latitude: route.params.latitude,
-				 			longitude: route.params.longitude
-				 		})}>
+				 	<TouchableOpacity style={styles.pointButton} onPress={() => navigation.navigate('SignUpPoints')}>
 				 		
 				 		<Image 
 				 		style={styles.buttonImage} 
@@ -143,14 +130,7 @@ const ChooseUser = () => {
 				 		opacity: opacityButtonC,
 				 		transform: [ {translateY: showButtonC.y } ]
 				 }]}>
-				 	<TouchableOpacity style={styles.userButton} onPress={() => 
-				 		navigation.navigate('SignUpUser', {
-				 			country: route.params.country,
-				 			city: route.params.city,
-				 			region: route.params.region,
-				 			latitude: route.params.latitude,
-				 			longitude: route.params.longitude
-				 		})}>
+				 	<TouchableOpacity style={styles.userButton} onPress={() => navigation.navigate('SignUpUser')}>
 				 		
 				 		<Image 
 				 		style={styles.buttonImage} 

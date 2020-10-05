@@ -15,8 +15,9 @@ import { faArrowLeft,
 		 faBuilding } from '@fortawesome/free-solid-svg-icons';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
+
 import api from '../../services/api';
-import ipApi from '../../services/ip-api';
+
 
 const SignUpCompany = () => {
 
@@ -28,8 +29,6 @@ const SignUpCompany = () => {
 	const [centralViewOpacity] = useState(new Animated.Value(0));
 	const [cnpj, setCnpj] = useState();
 	const [password, setPassword] = useState();
-
-	
 
 	const input1 = useRef(null);
 	const input2 = useRef(null);
@@ -119,11 +118,6 @@ const SignUpCompany = () => {
 						navigation.navigate('SwitchCollector', {
 							cnpj: cnpj,
 							passwordInput: password,
-							country: route.params.country,
-							city: route.params.city,
-							region: route.params.region,
-							latitude: route.params.latitude,
-							longitude: route.params.longitude
 						});
 					}
 					 

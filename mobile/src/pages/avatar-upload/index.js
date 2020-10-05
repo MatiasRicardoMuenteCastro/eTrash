@@ -16,7 +16,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import ImagePicker from 'react-native-image-picker';
 
-import api from '../../services/api';
 
 const Avatar = () => {
 
@@ -31,6 +30,7 @@ const Avatar = () => {
 	const [avatarViewOpacity] = useState(new Animated.Value(0));
 	const [showAvatarView] = useState(new Animated.ValueXY({x: 0, y: 80}));
 	const [avatar, setAvatar] = useState();
+	const [avatarUriResized, setAvatarUriResized] = useState();
 	const [readyButtonDisplay, setReadyButtonDisplay] = useState({ display: 'none' });
 	const [addButtonDisplay, setAddButtonDisplay] = useState({ display: 'flex' });
 
@@ -80,14 +80,18 @@ const Avatar = () => {
 		setDisplayAvatar({ display: 'flex' });
 	}
 
-	useEffect( async () => {
-		try {
-			await AsyncStorage.setItem('@user', route.params.user);
-			await AsyncStorage.setItem('@id', route.params.id);
-			await AsyncStorage.setItem('@token', route.params.token);
-		}catch(e){
-			console.log(e);
+	useEffect(() => {
+		const setUserDataIntoAsyncStorage = async () => {
+			try {
+				await AsyncStorage.setItem('@user', route.params.user);
+				await AsyncStorage.setItem('@id', route.params.id);
+				await AsyncStorage.setItem('@token', route.params.token);
+			}catch(e){
+				console.log(e);
+			}
 		}
+
+		setUserDataIntoAsyncStorage();
 	}, []);
 
 
@@ -107,38 +111,6 @@ const Avatar = () => {
 		setReadyButtonDisplay({ display: 'flex' });
 	}
 
-
-	const uploadImage = async () => {
-
-		try{ 
-			
-			const formImage = new FormData();
-
-			formImage.append('file', {
-				name: avatar.fileName,
-				fileSize: avatar.fileSize,
-				uri: avatar.uri,
-				type: avatar.type
-			});
-
-			console.log(formImage._parts[0]);
-
-			if(route.params.user == 'user'){	
-				const response = await api.post('/users/upload', formImage, {
-					headers: {
-						'authentication': `Bearer ${route.params.token}`,
-						'authorization': route.params.id,
-						'Content-Type': 'multipart/form-data'
-					}
-				})
-
-				console.log(response);
-
-			}
-		}catch(error){
-			console.log(error.response.data);
-		}
-	}
 
 
 	return(
@@ -176,11 +148,30 @@ const Avatar = () => {
 					<Text style={styles.addText}>Adicionar</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity style={[styles.readyButton, readyButtonDisplay]} onPress={uploadImage}>
+				<TouchableOpacity style={[styles.readyButton, readyButtonDisplay]} onPress={() => {
+					navigation.navigate('LoadingImageUpload', {
+						imageName: avatar.fileName,
+						imageUri: avatar.uri,
+						imageType: avatar.type,
+						imageSize: avatar.fileSize,
+						user: route.params.user
+					})
+				}}>
 					<Text style={styles.readyText}>Pronto</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity style={styles.skipButton} onPress={() => {}}>
+				<TouchableOpacity style={styles.skipButton} onPress={() => {
+					
+					const userType = route.params.user;
+					
+					switch (userType){
+						case 'user': 
+							navigation.navigate('DiscardMainUser');
+						break;
+						
+					}
+
+				}}>
 					<Text style={styles.skipText}>Pular</Text>
 				</TouchableOpacity>
 			</Animated.View>

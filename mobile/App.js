@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import Routes from './src/routes/routes';
 
+import { AuthProvider } from './src/context/authContext';
+
 const App = () => {
 
 	useEffect( async () => {
@@ -19,7 +21,9 @@ const App = () => {
         <>
         <StatusBar backgroundColor="#ffffff" barStyle='dark-content' translucent /> 
         <NavigationContainer>
-        	<Routes />
+               <AuthProvider> 
+        	       <Routes />
+                </AuthProvider>
         </NavigationContainer>
         </>
      );

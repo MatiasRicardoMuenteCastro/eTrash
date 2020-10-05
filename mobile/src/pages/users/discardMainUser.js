@@ -1,24 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, 
 	     Text, 
 	     StyleSheet, 
 	     Animated,
 	     TouchableOpacity,
 	     ScrollView,
-	     TextInput } from 'react-native';
+	     TextInput,
+	     StatusBar } from 'react-native';
 
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faPlus, faTrash, faRecycle, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import AsyncStorage from '@react-native-community/async-storage';
 import api from '../../services/api';
 
-const DiscardMain = () => {
+import AuthContext from '../../context/authContext';
+
+const DiscardMainUser = () => {
 	
 	const navigation = useNavigation();
 	const route = useRoute();
 	const inputField = useRef(null);
+
+	const { signed, signUpUser } = useContext(AuthContext);
 
 	const [discards] = useState([]);
 	const [countList, setCountList] = useState(discards.length);
@@ -45,6 +49,7 @@ const DiscardMain = () => {
 		
 	return (
 		<View style={styles.container}> 
+			<StatusBar backgroundColor="white" barStyle="dark-content" />
 			<View style={styles.whiteHeader}>
 			</View>
 			<Animated.View style={[styles.header, { opacity: titleOpacity, transform: [{ translateY: showTitle.y }] }]}>
@@ -62,26 +67,9 @@ const DiscardMain = () => {
 						showsHorizontalScrollIndicator={false}
 						contentContainerStyle={{paddingHorizontal: 110}}
 					>
-					<RectButton style={styles.readyBtn} onPress={async () => {
-						await api.post('/point/create', {
-								name: route.params.usernameTextInput,
-								passwordInput: route.params.passwordTextInput,
-								discarts: discards,
-								rua: route.params.streetInput,
-								numero: route.params.numberInput,
-								country: route.params.localCountry,
-								city: route.params.localCity,
-								region: route.params.localRegion,
-								latitude: route.params.localLatitude,
-								longitude: route.params.localLongitude
-
-						})
-						.then(function(response){
-							navigation.navigate('Avatar');
-						})
-						.catch(function(error){
-							console.log(error);
-						});
+					<RectButton style={styles.readyBtn} onPress={() => {
+						signUpUser();
+						console.log(signed);
 					}} >
 						<FontAwesomeIcon style={styles.readyIcon} icon={ faCheck } size={25} />
 						<Text style={styles.readyText}>Pronto</Text>
@@ -116,6 +104,7 @@ const DiscardMain = () => {
 						discards.unshift(discardInput);
 						setCountList(discards.length);
 						inputField.current.clear();
+						setDiscardInput('');
 						
 					}
 				}}>
@@ -167,7 +156,8 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 		fontFamily: 'Roboto-Bold',
 		color: 'black',
-		marginTop: 40
+		marginTop: 40,
+		marginLeft: 50
 	},
 	titleIcon: {
 		color: 'black',
@@ -313,4 +303,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default DiscardMain;
+export default DiscardMainUser;

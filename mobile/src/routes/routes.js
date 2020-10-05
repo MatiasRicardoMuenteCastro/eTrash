@@ -1,24 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 
 import AppRoutes from './app-routes';
 import NewUserRoutes from './new-user-routes';
+import AuthRoutes from './auth-routes';
+
 import AsyncStorage from '@react-native-community/async-storage';
 
-const Routes = () => {
+import AuthContext from '../context/authContext';
 
-	const [user, setUser] = useState();
-  
+const Routes = () => {
+	
+	const { signed } = useContext(AuthContext);
+	const [oldUser, setOldUser] = useState();
+
+	const getUser = async () => {
+
+		try {
+			const user = await AsyncStorage.getItem('@user'); 
+			setOldUser(user);
+		} catch(error){
+			console.log(error);
+		}
+	}
+
 	useEffect( async () => {
-		const userStorage = await AsyncStorage.getItem('@user');
-		setUser(userStorage);
+		await getUser();
 	}, []);
 
-	if(user != null){
-		return <AppRoutes />
-	}else{
+	console.log(signed);
+	console.log(oldUser);
+
+	if(signed == false && oldUser == null){
 		return <NewUserRoutes />
 	}
+
+	else if (signed == true) {
+		return <AuthRoutes />
+	}
+
+	else if(signed == false && oldUser != null) {
+		return <AppRoutes />
+	}
+
+
 }
 
 export default Routes;

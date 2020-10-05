@@ -1,16 +1,22 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { ActivityIndicator, StatusBar, View, Text, StyleSheet, Animated } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native'; 
+
 import api from '../../services/api';
+
+import AuthContext from '../../context/authContext';
 
 const LoadingSignUp = () => {
 	
 	const route = useRoute();
 	const navigation = useNavigation();
-	
+
+	const { country, city, region, latitude, longitude } = useContext(AuthContext); 
 
 	const [loadingViewOpacity] = useState(new Animated.Value(0));
 	const [loadingViewAnim] = useState(new Animated.ValueXY({x: 0, y: 80}));
+	const [loading, setLoading] = useState(true);
+
 
 	useEffect(() => {
 		Animated.parallel([
@@ -27,132 +33,149 @@ const LoadingSignUp = () => {
 		]).start();
 	}, []);
 
-	
- 
+
 	const createDiscardPoint = async () => {
-		await api.post('/point/create', {
+		
+		try {
+
+			const response = await api.post('/point/create', {
 			name: route.params.name,
+			email: route.params.email,
 			passwordInput: route.params.passwordInput,
-			discarts: route.params.discarts,
+			discarts: route.params.discarts, 
 			rua: route.params.rua,
 			numero: route.params.numero,
-			country: route.params.country,
-			city: route.params.city,
-			region: route.params.region,
-			latitude: route.params.latitude,
-			longitude: route.params.longitude
+			country: country,
+			city: city,
+			region: region,
+			latitude: latitude,
+			longitude: longitude
 
-		})
-
-		.then(function(response){
-			navigation.navigate('Avatar', {
-				user: 'discardPoint',
-				welcome: response.data.welcome,
-				token: response.data.token,
-				id: response.data.id
-			});
-		})
-
-		.catch(function(error){
-				console.log(error);
 		});
 
+		navigation.navigate('Avatar', {
+			user: 'discardPoint',
+			welcome: response.data.welcome,
+			token: response.data.token,
+			id: response.data.id,
+			username: response.data.name
+		});
+
+		}catch(error){
+			console.log(error);
+		}
 	}
 
 	const createCompany = async () => {
-		await api.post('/companies/create', {
-			cnpj: route.params.cnpj,
-			passwordInput: route.params.passwordInput,
-			collector: route.params.collector,
-			country: route.params.country,
-			city: route.params.city,
-			region: route.params.region,
-			latitude: route.params.latitude,
-			longitude: route.params.longitude
 
-		})
-		.then(function(response){
+		try {
+
+			const response = await api.post('/companies/create', {
+				cnpj: route.params.cnpj,
+				passwordInput: route.params.passwordInput,
+				collector: route.params.collector,
+				country: country,
+				city: city,
+				region: region,
+				latitude: latitude,
+				longitude: longitude
+
+			})
+
+
 			navigation.navigate('Avatar', {
 				user: 'company',
 				welcome: response.data.welcome,
 				id: response.data.id,
 				token: response.data.token,
 				collector: route.params.collector,
-				country: route.params.country,
-				city: route.params.city,
-				region: route.params.region,
 				welcome: response.data.welcome,
 
 			});
 
-			
-		})
-		.catch(function(error){
+
+		}catch(error){
 			navigation.navigate('InvalidCnpj', {
 				error: error.response.data.error,
 				passwordInput: route.params.passwordInput,
 				collector: route.params.collector,
-				country: route.params.country,
-				city: route.params.city,
-				region: route.params.region,
-				latitude: route.params.latitude,
-				longitude: route.params.longitude
+				country: country,
+				city: city,
+				region: region,
+				latitude: latitude,
+				longitude: longitude
 
 			});
-		})
+
+		}
+
 	}
 
 	const createUser = async () => {
-		await api.post('/users/create', {
-			name: route.params.name,
-			email: route.params.email, 
-			passwordInput: route.params.password,
-			country: route.params.country,
-			city: route.params.city,
-			region: route.params.region,
-			latitude: route.params.latitude,
-			longitude: route.params.longitude
-		}).then(function(response){
+
+
+		try {
+
+			const response = await api.post('/users/create', {
+				name: route.params.name,
+				email: route.params.email, 
+				passwordInput: route.params.password,
+				country: country,
+				city: city,
+				region: region,
+				latitude: latitude,
+				longitude: latitude
+			})		
+
 			navigation.navigate('Avatar', {
 				user: 'user',
 				welcome: response.data.welcome,
 				id: response.data.id,
 				token: response.data.token,
-				name: response.data.name,
-				email: response.data.email,
-				country: route.params.country,
-				city: route.params.city,
-				region: route.params.region,
-				latitude: route.params.latitude,
-				longitude: route.params.longitude
 			});
-		})
-		.catch(function(error){
+
+		}catch(error){
 			console.log(error);
-		});
+		}
+
 	}
 
 
-	useEffect( async () => {
-		if (route.params.user == 'user'){
-			await setTimeout(createUser, 2000);
+	useEffect(() => {
+		const signUp = async () => {
+			if(route.params.user == 'user'){
+				await createUser();
+			}
+			if(route.params.user == 'company'){
+				await createCompany();
+			}
+			if(route.params.user == 'point'){
+				await createDiscardPoint();
+			}
 		}
-		if (route.params.user == 'company'){
-			await setTimeout(createCompany, 2000);
-		}
-		if (route.params.user == 'discardPoint') {
-			await setTimeout(createDiscardPoint, 2000);
-		}
+
+		signUp();
 	}, []);
+
+
+	const renderLoading = () => {
+		if(loading){
+			return (
+				<Animated.View style={[styles.loadingView, { opacity: loadingViewOpacity, transform: [ { translateY: loadingViewAnim.y } ] } ]}>
+					<ActivityIndicator size="large" color="white" />
+					<Text style={styles.loadingText}>Aguarde um pouco...</Text>
+				</Animated.View>
+			); 
+
+		}
+	} 
 
 	return (
 		<View style={styles.container}>
-			<StatusBar backgroundColor="#38c172" barStyle="light-content" />
-			<Animated.View style={[styles.loadingView, { opacity: loadingViewOpacity, transform: [ { translateY: loadingViewAnim.y } ] } ]}>
-				<ActivityIndicator size="large" color="white" />
-				<Text style={styles.loadingText}>Aguarde um pouco...</Text>
-			</Animated.View>
-		</View> 
+		<StatusBar backgroundColor="#38c172" barStyle="light-content" />
+		{renderLoading()}
+		</View>
+
 
 	);
 

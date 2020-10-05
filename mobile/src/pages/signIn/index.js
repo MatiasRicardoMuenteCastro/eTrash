@@ -5,8 +5,8 @@ import { View,
 		 StatusBar, 
 		 TouchableOpacity, 
 		 Animated, 
-		 TextInput,
-		 KeyboardAvoidingView} from 'react-native';
+		 TextInput} from 'react-native';
+		 
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'; 
 import { faArrowLeft, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';

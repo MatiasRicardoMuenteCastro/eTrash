@@ -14,9 +14,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeft, faEnvelope, faAddressBook } from '@fortawesome/free-solid-svg-icons';
 import LottieView from 'lottie-react-native';
-import useKeyboard from '@rnhooks/keyboard';
-import ipApi from '../../services/ip-api';
-import api from '../../services/api';
+
+
 
 
 const UserEmail = () => {
@@ -26,26 +25,10 @@ const UserEmail = () => {
 	const [footerAnim] = useState(new Animated.ValueXY({x: 0, y: 100}));
 	const [footerOpacity] = useState(new Animated.Value(0)); 
 	const [email, setEmail] = useState();
-	const [country, setCountry] = useState();
-	const [city, setCity] = useState();
-	const [region, setRegion] = useState();
-	const [latitude, setLatitude] = useState();
-	const [longitude, setLongitude] = useState();
-	const [footerDisplay, setFooterDisplay] = useState({ display: 'flex' });
-	const [visible, dismiss] = useKeyboard();
 
 	const navigation = useNavigation();
 	const route = useRoute();
 	const input1 = useRef(null);
-
-	useEffect( async () => {
-		const response = await ipApi.get('/json'); 
-	    setCountry(response.data.country);
-	    setCity(response.data.city);
-	   	setRegion(response.data.region);
-	    setLatitude(response.data.lat);
-	   	setLongitude(response.data.lon);
-	}, []);
 	
 
 	useEffect(() => {
@@ -73,14 +56,6 @@ const UserEmail = () => {
 		]).start();
 	}, []);
 	
-
-	useEffect(() => {
-		if(visible == true){
-			setFooterDisplay({ opacity: 0, visibility: 'hidden' });
-		}else{
-			setFooterDisplay({ opacity: 1, visibility: 'visible' });
-		}
-	}, [visible]);
 
 
 	return (
@@ -119,11 +94,6 @@ const UserEmail = () => {
 							name: route.params.usernameTextInput,
 							password: route.params.passwordTextInput,
 							email: email,
-							country: country,
-							city: city,
-							region: region,
-							latitude: latitude,
-							longitude: longitude,
 							
 						});
 					
@@ -141,11 +111,11 @@ const UserEmail = () => {
 					transform: [{ translateY: footerAnim.y }] } ]}>
 
 					<LottieView 
-					style={[styles.robotAnim, footerDisplay]}
+					style={styles.robotAnim}
 					source={require('../../assets/animations/robot.json')}
 					autoPlay loop /> 
 
-					<Text style={[styles.textFooter, footerDisplay]}>Estou aqui para te ajudar com seus{'\n'}resíduos eletrônicos.</Text>
+					<Text style={styles.textFooter}>Estou aqui para te ajudar com seus{'\n'}resíduos eletrônicos.</Text>
 			</Animated.View>
 		  </View>
 		

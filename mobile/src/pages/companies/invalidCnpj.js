@@ -13,6 +13,7 @@ import LottieView from 'lottie-react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBuilding } from '@fortawesome/free-solid-svg-icons';
+
 import api from '../../services/api';
 
 
@@ -104,11 +105,6 @@ const InvalidCnpj = () => {
 			navigation.navigate('Avatar', {
 				cnpj: cnpj,
 				collector: route.params.collector,
-				country: route.params.country,
-				city: route.params.city,
-				region: route.params.region,
-				latitude: route.params.latitude,
-				longitude: route.params.longitude,
 				user: 'company',
 				id: response.data.id,
 				token: response.data.token,

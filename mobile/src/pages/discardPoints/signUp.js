@@ -15,7 +15,7 @@ import { faArrowLeft,
 		 faLock, } from '@fortawesome/free-solid-svg-icons';
 
 import { useNavigation } from '@react-navigation/native';
-import api from '../../services/api';
+
 
 const SignUpPoint = () => {
 
@@ -27,9 +27,7 @@ const SignUpPoint = () => {
 	const [centralViewOpacity] = useState(new Animated.Value(0));
 	const [username, setUsername] = useState();
 	const [password, setPassword] = useState();
-	const [number, setNumber] = useState();
-	const [street, setStreet] = useState();
-	const [passwordFocus, setPasswordFocus] = useState(false);
+
 	
 	const input1 = useRef(null);
 	const input2 = useRef(null);
@@ -114,7 +112,7 @@ const SignUpPoint = () => {
 				<TouchableOpacity style={styles.nextButton} 
 				onPress={() => {				
 					if(username != null && password != null && username != '' && password != ''){
-						navigation.navigate('Anddress', {
+						navigation.navigate('Address', {
 					  		usernameTextInput: username,
 					  		passwordTextInput: password
 					  	});

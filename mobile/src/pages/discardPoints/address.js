@@ -12,10 +12,9 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faMapMarkedAlt, faSortNumericUp, faArrowLeft, faRoad } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkedAlt, faSortNumericUp, faArrowLeft, faRoad, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import LottieView from 'lottie-react-native';
-import useKeyboard from '@rnhooks/keyboard';
-import ipApi from '../../services/ip-api';
+
 
 const Address = () => {
 
@@ -25,18 +24,13 @@ const Address = () => {
 	const [footerOpacity] = useState(new Animated.Value(0)); 
 	const [number, setNumber] = useState();
 	const [street, setStreet] = useState();
-	const [country, setCountry] = useState();
-	const [city, setCity] = useState();
-	const [region, setRegion] = useState();
-	const [latitude, setLatitude] = useState();
-	const [longitude, setLongitude] = useState();
-	const [footerDisplay, setFooterDisplay] = useState({ display: 'flex' });
-	const [visible, dismiss] = useKeyboard();
+	const [email, setEmail] = useState();
 
 	const navigation = useNavigation();
 	const route = useRoute();
 	const input1 = useRef(null);
 	const input2 = useRef(null);
+	const input3 = useRef(null);
 
 	useEffect(() => {
 		Animated.parallel([
@@ -62,24 +56,7 @@ const Address = () => {
 			})
 		]).start();
 	}, []);
-
-	useEffect(async () => {
-	    const response = await ipApi.get('/json'); 
-	    setCountry(response.data.country);
-	    setCity(response.data.city);
-	    setRegion(response.data.region);
-	    setLatitude(response.data.lat);
-	    setLongitude(response.data.lon);
-	}, []);
 	
-
-	useEffect(() => {
-		if(visible == true){
-			setFooterDisplay({ opacity: 0, visibility: 'hidden' });
-		}else{
-			setFooterDisplay({ opacity: 1, visibility: 'visible' });
-		}
-	}, [visible]);
 
 
 	return (
@@ -97,9 +74,10 @@ const Address = () => {
 				  transform: [ {translateY: centralViewAnim.y} ] } ]
 				}>
 				<FontAwesomeIcon style={styles.iconTitle} icon={ faMapMarkedAlt } size={25} />
-				<Text style={styles.text}>Endereço</Text>
+				<Text style={styles.text}>Endereço e contato</Text>
 				<Text style={styles.numberLabel}>Número (opcional)</Text>
 				<Text style={styles.streetLabel}>Rua</Text>
+				<Text style={styles.emailLabel}>Email</Text>
 				<TextInput
 					style={styles.streetInput}
 					onChangeText={text => setStreet(text)}
@@ -120,23 +98,32 @@ const Address = () => {
 					placeholderTextColor="black"
 					keyboardType="numeric"
 					ref={input2}
+					onSubmitEditing={() => input3.current.focus()}
 
 				/>
 				<FontAwesomeIcon style={styles.numberIcon} icon={ faSortNumericUp } size={20} />
+				<TextInput 
+					style={styles.emailInput}
+					onChangeText={text => setEmail(text)}
+					value={email} 
+					placeholder="Seu e-mail"
+					placeholderTextColor="black"
+					keyboardType="email-address"
+					autoCapitalize={'none'}
+					ref={input3}
+
+				/>
+				<FontAwesomeIcon style={styles.emailIcon} icon={ faEnvelope } size={20} />
 				<TouchableOpacity style={styles.nextButton} 
 				onPress={() => {				
 					if(street != null && street != ''){
-						navigation.navigate('DiscardMain', {
+						navigation.navigate('DiscardMainPoints', {
 							usernameTextInput: route.params.usernameTextInput,
 							passwordTextInput: route.params.passwordTextInput,
 							streetInput: street,
 							numberInput: number,
-							localCountry: country,
-							localCity: city,
-							localRegion: region,
-							localLatitude: latitude,
-							localLongitude: longitude,
-							user: 'discardPoint'
+							emailInput: email,
+							user: 'point'
 						});
 					}
 					 
@@ -151,11 +138,11 @@ const Address = () => {
 					transform: [{ translateY: footerAnim.y }] } ]}>
 
 					<LottieView 
-					style={[styles.markerAnim, footerDisplay]}
+					style={styles.markerAnim}
 					source={require('../../assets/animations/markerMap.json')}
 					autoPlay loop /> 
 
-					<Text style={[styles.textFooter, footerDisplay]}>Lembre-se sua localização é importante{'\n'}para que pessoas te encontrem</Text>
+					<Text style={styles.textFooter}>Lembre-se sua localização é importante{'\n'}para que pessoas te encontrem</Text>
 			</Animated.View>
 		  </View>
 		
@@ -239,14 +226,14 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		color: 'black',
 		marginLeft: 200,
-		marginTop: 35
+		marginTop: 20
 	},
 	iconTitle: {
 		top: 0,
 		left: 0,
 		position: 'absolute',
 		marginLeft: 160,
-		marginTop: 38,
+		marginTop: 22,
 		color: 'black',
 	},
 	nextText: {
@@ -257,7 +244,7 @@ const styles = StyleSheet.create({
 	streetLabel: {
 		fontSize: 16,
 		color: 'black',
-		marginTop: 95,
+		marginTop: 80,
 		fontFamily: 'Roboto-Bold',
 		top: 0,
 		left: 0,
@@ -273,10 +260,10 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		position: 'absolute',
-		marginTop: 125,
+		marginTop: 110,
 		marginLeft: 150 ,
 		color: 'black',
-		fontFamily: 'Roboto-Bold',
+		fontFamily: 'Roboto-Medium',
 		paddingLeft: 45
 	},
 	streetIcon: {
@@ -284,7 +271,7 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		position: 'absolute',
-		marginTop: 140,
+		marginTop: 125,
 		marginLeft: 165
 	},
 	numberIcon: {
@@ -292,13 +279,13 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		position: 'absolute',
-		marginTop: 235,
+		marginTop: 215,
 		marginLeft: 165
 	},
 	numberLabel: {
 		fontSize: 16,
 		color: 'black',
-		marginTop: 190,
+		marginTop: 170,
 		fontFamily: 'Roboto-Bold',
 		top: 0,
 		left: 0,
@@ -314,11 +301,44 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		position: 'absolute',
-		marginTop: 220,
+		marginTop: 200,
 		marginLeft: 150,
 		color: 'black',
-		fontFamily: 'Roboto-Bold',
+		fontFamily: 'Roboto-Medium',
 		paddingLeft: 45,	
+	},
+	emailInput: {
+		width: 300,
+		height: 50,
+		borderWidth: 2,
+		borderColor: 'black',
+		borderRadius: 25,
+		top: 0,
+		left: 0,
+		position: 'absolute',
+		marginTop: 290,
+		marginLeft: 150,
+		color: 'black',
+		fontFamily: 'Roboto-Medium',
+		paddingLeft: 45,	
+	},
+	emailIcon:{
+		color: 'black',
+		top: 0,
+		left: 0,
+		position: 'absolute',
+		marginTop: 305,
+		marginLeft: 165
+	},
+	emailLabel:{
+		fontSize: 16,
+		color: 'black',
+		marginTop: 260,
+		fontFamily: 'Roboto-Bold',
+		top: 0,
+		left: 0,
+		position: 'absolute',
+		marginLeft: 170 
 	},
 	nextButton: {
 		width: 300,
@@ -329,7 +349,7 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		position: 'absolute',
-		marginTop: 300,
+		marginTop: 370,
 		marginLeft: 150,
 		backgroundColor: '#ffffff',
 		justifyContent: 'center',

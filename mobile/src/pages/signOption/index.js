@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Image, Animated } from 'react-native';
 
 
@@ -7,10 +7,12 @@ import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import ipApi from '../../services/ip-api';
 
+import AuthContext from '../../context/authContext';
 
 const SignOption = () => {
+
+	const { getUserLocation } = useContext(AuthContext);
 
 	const [logoOpacity] = useState(new Animated.Value(0));
 	const [showLogo] = useState(new Animated.ValueXY({x: 0, y: 80}));
@@ -19,11 +21,6 @@ const SignOption = () => {
 	const [showTextCentral] = useState(new Animated.ValueXY({x: 0, y: 80}));
 	const [textCentralOpacity] = useState(new Animated.Value(0));
 	const [buttonAnim] = useState(new Animated.ValueXY({x: 0, y: 60}));
-	const [country, setCountry] = useState();
-	const [city, setCity] = useState();
-	const [region, setRegion] = useState();
-	const [latitude, setLatitude] = useState();
-	const [longitude, setLongitude] = useState();
 
 	useEffect(() => {
 		Animated.parallel([
@@ -67,14 +64,16 @@ const SignOption = () => {
 		]).start();
 	}, []);
 
-	useEffect( async () => {
-		const response = await ipApi.get('/json'); 
-	  	setCountry(response.data.country);
-	   	setCity(response.data.city);
-	    setRegion(response.data.region);
-	   	setLatitude(response.data.lat);
-	   	setLongitude(response.data.lon);	
+
+	useEffect(() => {
+		const myLocation = async () => {
+			await getUserLocation();
+		}
+
+		myLocation();
 	}, []);
+
+
 
 	const navigation = useNavigation();
 
@@ -115,14 +114,7 @@ const SignOption = () => {
 				{ transform: [ { translateY: buttonAnim.y } ] }
 			]}>
 
-				<RectButton style={styles.signInButton} onPress={() =>
-				 navigation.navigate('SignIn', {
-				 	country: country,
-				 	city: city,
-				 	region: region,
-				 	latitude: latitude,
-				 	longitude: longitude
-				 })}>
+				<RectButton style={styles.signInButton} onPress={() => navigation.navigate('SignIn')}>
 
 
 					<View style={styles.buttonIconIn}>
@@ -130,14 +122,7 @@ const SignOption = () => {
 					</View>
 					<Text style={styles.textButtonIn}>Entrar</Text>
 				</RectButton>
-				<RectButton style={styles.signUpButton} onPress={() => 
-				navigation.navigate('ChooseUser', {
-					country: country,
-					city: city,
-					region: region,
-					latitude: latitude,
-					longitude: longitude
-				})}>
+				<RectButton style={styles.signUpButton} onPress={() => navigation.navigate('ChooseUser')}>
 					<View style={styles.buttonIconUp}>
 						<FontAwesomeIcon style={styles.iconUp} icon={ faUserPlus }/>
 					</View>

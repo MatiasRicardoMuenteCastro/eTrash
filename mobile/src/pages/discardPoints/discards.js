@@ -14,7 +14,7 @@ import { faPlus, faTrash, faRecycle, faCheck, faArrowLeft } from '@fortawesome/f
 import AsyncStorage from '@react-native-community/async-storage';
 import api from '../../services/api';
 
-const DiscardMain = () => {
+const DiscardMainPoints = () => {
 	
 	const navigation = useNavigation();
 	const route = useRoute();
@@ -69,11 +69,7 @@ const DiscardMain = () => {
 							discarts: discards,
 							rua: route.params.streetInput,
 							numero: route.params.numberInput,
-							country: route.params.localCountry,
-							city: route.params.localCity,
-							region: route.params.localRegion,
-							latitude: route.params.localLatitude,
-							longitude: route.params.localLongitude,
+							email: route.params.emailInput,
 							user: route.params.user
 						});	
 						
@@ -308,4 +304,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default DiscardMain;
+export default DiscardMainPoints;
