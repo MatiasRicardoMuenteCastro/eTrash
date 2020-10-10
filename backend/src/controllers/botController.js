@@ -24,7 +24,7 @@ module.exports = {
             res.send(response.result, null, 2);
           })
           .catch(err => {
-            res.send('Sem conexão com a internet.');
+            res.send('Erro ao enviar a mensagem.');
           });
       }
     }
