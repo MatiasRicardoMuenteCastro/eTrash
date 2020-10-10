@@ -20,7 +20,6 @@ function generateToken(params = {}){
 	});
 }
 
-
 module.exports = {
 	index: async (req, res) => {
 		const users = await connection('users').select('name', 'email', 'discarts');
@@ -76,9 +75,9 @@ module.exports = {
 		return res.json({
 			welcome: `Bem vindo(a) ${name}`, 
 			id: id,  
-			token: generateToken({id: id}),
 			name: name,
 			email: email,
+			token: generateToken({id: id})
 		});
 	},
 
@@ -117,18 +116,45 @@ module.exports = {
 		return res.send();
 		
 	},
+	updateData: async(req,res)=>{
+		const {
+			name,
+			email,
+			country,
+			city,
+			region,
+			latitude,
+			longitude
+			} = req.body;
+			
+			const userId = req.headers.authorization;
+			const userIDDB = await connection('users').select('id').where('id',userId).first();
 
+			if(!userIDDB){
+				return res.status(401).json({error:"Usuario não encontrado"});
+			}
 
-	getUserDiscards: async (req, res) => {
-		const userId = req.headers.authorization;
-		const discards = await connection('users').where('id', userId).select('discarts').first();
+			const userFields = [name,email,country,city,region,latitude,longitude];
 
-		if(!discards){
-			return res.status(400).json({error: 'Usuário não encontrado'});
-		}	
+		 	const items = userFields.map(function(item){
+				 if(item !== ""){
+					 return item;
+				 }
+			 });
 
-		return res.json({discards: discards});
-
+			const [varName,varEmail,varCountry,varCity,varRegion,varLatitude,varLongitude] = items;
+			
+			await connection('users').where('id',userIDDB.id).update({
+				name:varName,
+				email:varEmail,
+				country:varCountry,
+				city:varCity,
+				region:varRegion,
+				latitude:varLatitude,
+				longitude:varLongitude
+			});
+			
+			return res.json({sucess: "Informações de usuário atualizadas com sucesso."});
 	},
 	
 	upload: async (req, res) => {
@@ -145,10 +171,6 @@ module.exports = {
 		const imgName = req.file.originalname;
 		const size = req.file.size;
 		const key = req.file.filename;
-
-		console.log(key);
-
-
 		await connection('uploads').insert({
 			id,
 			imgName,
@@ -228,7 +250,7 @@ module.exports = {
 				password_reset_expires: null
 			});
 
-			return res.send("Senha resetada com sucesso.");
+			return res.send({sucess:"Senha resetada com sucesso."});
 
 		}catch(err){
 			return res.status(400).json({error:"Erro ao resetar a senha."});
