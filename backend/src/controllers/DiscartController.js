@@ -6,9 +6,8 @@ const path = require('path');
 
 module.exports = {
 	userUpdate: async (req, res) => {
-		const userId = req.headers.identification;
-		const { userDiscarts } = req.body;
-		const userIDDB = await connection('users').where('id', userId)
+		const { name, userDiscarts } = req.body;
+		const userIDDB = await connection('users').where('name', name)
 		.select('id').first();
 
 		if(!userIDDB){
@@ -22,9 +21,8 @@ module.exports = {
 	},
 
 	companyUpdate: async (req, res) => {
-		const companyId = req.headers.identification;
-		const { companyDiscarts } = req.body;
-		const companyIDDB = await connection('companies').where('id', companyId)
+		const { companyName, companyDiscarts } = req.body;
+		const companyIDDB = await connection('companies').where('name', companyName)
 		.select('id').first();
 
 		if(!companyIDDB){
@@ -38,9 +36,9 @@ module.exports = {
 	},
 	
 	pointUpdate: async (req, res) => {
-		const pointId = req.headers.identification;
-		const { pointDiscarts } = req.body;
-		const pointIDDB = await connection('discarts_points').where('id', pointId)
+		const { pointName, pointDiscarts } = req.body;
+		const pointIDDB = await connection('discarts_points')
+		.where('name', pointName)
 		.select('id').first();
 
 		if(!pointIDDB){
@@ -55,52 +53,52 @@ module.exports = {
 	},
 
 	userGet: async (req, res) => {
-		const userId = req.headers.identification;
-		const userIdDB = connection('users').where('id', userId).select('id').first();
+		const userId = req.headers.authorization;
+		const userIdDB = await connection('users').where('id', userId).select('id').first();
 		
-		if(!userIDDB){
+		if(!userIdDB){
 			return res.status(400).json({ error: 'Usuário não encontrado'});
 		}
 
-		const userDiscarts = connection('users').where('id', userIDDB.id)
+		const userDiscarts = await connection('users').where('id', userIdDB.id)
 		.select('discarts').first();
 
-		return res.json({ discarts: userDiscarts });
+		return res.json(userDiscarts);
 
-	},	
-
+	},
+	
 	companyGet: async (req, res) => {
-		const companyId = req.headers.identification;
-		const companyIdDB = connection('companies').where('id', companyId)
+		const companyId = req.headers.authorization;
+		const companyIdDB = await connection('companies').where('id', companyId)
 		.select('id').first();
 
 		if(!companyIdDB){
 			return res.status(400).json({ error: 'Empresa não encontrada' });
 		}
 
-		const companyDiscarts = connection('companies').where('id', companyIdDB.id)
+		const companyDiscarts = await connection('companies').where('id', companyIdDB.id)
 		.select('discarts').first();
 
-		return res.json({ discarts: companyDiscarts });
+		return res.json(companyDiscarts);
 	},
 
 	pointGet: async (req, res) => {
-		const pointId = req.headers.identification;
-		const pointIdDB = connection('dsiacarts_points').where('id', pointId)
+		const pointId = req.headers.authorization;
+		const pointIdDB = await connection('discarts_points').where('id', pointId)
 		.select('id').first();
 
 		if(!pointIdDB){
 			return res.status(400).json({ error: 'Ponto de coleta não encontrado'});
 		}
 
-		const pointDiscarts = connection('discarts_points').where('id', pointIdDB)
+		const pointDiscarts = await connection('discarts_points').where('id', pointIdDB.id)
 		.select('discarts').first();
 
-		return res.json({ discarts: pointDiscarts });
+		return res.json(pointDiscarts);
  	},
 
 	searchPointForUser: async (req, res) => {
-		const user_id = req.headers.identification;
+		const user_id = req.headers.authorization;
 		const userDiscartsDB = await connection('users').where('id', user_id)
 		.select('discarts').first();
 
