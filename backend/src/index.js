@@ -16,6 +16,6 @@ app.use(routes);
 app.use(routesAuth);
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-app.listen(process.env.PORT || 3001);
+server.listen(process.env.PORT || 3001);
 
 
