@@ -23,8 +23,8 @@ function generateToken(params = {}){
 module.exports = {
     index: async (request, response) => {
         const points = await connection('discarts_points').select('name','rua','numero','numero','discarts','country','city','region');
-        const [count] = await connection('disacrat_points').count();
-        response.header('Total-Points-Count', count['count']);
+        const [count] = await connection('companies').count();
+        response.header('Total-Companies-Count', count['count']);
 
         const pointsAvatarsKey = await connection('uploads').whereNotNull('point_id').select('key');
 
@@ -84,15 +84,15 @@ module.exports = {
         return response.json({
             welcome: `Bem-vindo(a) Ponto de Coleta ${name}`,
             id: id,
-            token: generateToken({id: id}),
             name: name,
-            discarts: discarts
+            discarts: discarts,
+            token: generateToken({id: id})
         });
 
     },
     
     delete: async (request, response) => {
-        const point_id = request.headers.identification;
+        const point_id = request.headers.authorization;
         const { passwordInput } = request.body;
         const idSearch = await connection('discarts_points').where('id', point_id).select('id')
         .first();
@@ -126,9 +126,54 @@ module.exports = {
         
         return response.send();
     },
+
+    updateData: async(req,res)=>{
+		const {
+			name,
+            email,
+            street,
+            number,
+			country,
+			city,
+			region,
+			latitude,
+			longitude
+			} = req.body;
+			
+			const pointId = req.headers.authorization;
+			const pointIDDB = await connection('discarts_points').select('id').where('id',pointId).first();
+
+			if(!pointIDDB){
+				return res.status(401).json({error:"Usuario não encontrado"});
+			}
+
+			const pointFields = [name,email,street,number,country,city,region,latitude,longitude];
+
+		 	const items = pointFields.map(function(item){
+				 if(item !== ""){
+					 return item;
+				 }
+			 });
+
+			const [varName,varEmail,varStreet,varNumber,varCountry,varCity,varRegion,varLatitude,varLongitude] = items;
+			
+			await connection('discarts_points').where('id',pointIDDB.id).update({
+				name:varName,
+                email:varEmail,
+                rua:varStreet,
+                numero:varNumber,
+				country:varCountry,
+				city:varCity,
+				region:varRegion,
+				latitude:varLatitude,
+				longitude:varLongitude
+			});
+			
+			return res.json({sucess: "Informações do ponto de coleta atualizadas com sucesso."});
+	},
     
     upload: async(request, response) => {
-        const point_id = request.headers.identification;
+        const point_id = request.headers.authorization;
         const pointIDDB = await connection('discarts_points').where('id', point_id)
         .select('id').first();
 
@@ -222,7 +267,7 @@ module.exports = {
 				password_reset_expires: null
 			});
 
-			return res.send("Senha resetada com sucesso.");
+			return res.send({sucess:"Senha resetada com sucesso."});
 
 		}catch(err){
 			return res.status(400).json({error:"Erro ao resetar a senha."});
