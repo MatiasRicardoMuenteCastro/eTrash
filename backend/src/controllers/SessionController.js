@@ -63,16 +63,17 @@ module.exports = {
 
         await connection('companies').where('id', companyID.id).update({latitude: localLat, longitude: localLon });
         return res.json({
-            id: company.id,
+            id: companyID.id,
             company: companyName.name,
+            email: email,
             token: generateToken({id: companyID.id})
         });
 
     },
 
     pointCreate: async (req, res) => {
-        const {name, passwordInput, localLat, localLon} = req.body;
-        const pointID = await connection('discarts_points').where('name', name).select('id')
+        const {email, passwordInput, localLat, localLon} = req.body;
+        const pointID = await connection('discarts_points').where('email', email).select('id')
         .first();
 
         if (!pointID) {
@@ -87,11 +88,14 @@ module.exports = {
         if (!passwordMatch) {
             return res.status(400).json({error: 'Senha Inválida'});
         }
+        const pointName = await connection('discarts_points').where('id',pointID.id).select('name').first();
 
         await connection('discarts_points').where('id', pointID.id).update({latitude: localLat, longitude: localLon });
+
         return res.json({
             id: pointID.id,
-            point: name,
+            name: pointName.name,
+            email: email,
             token: generateToken({id: pointID.id})
         });
     }
