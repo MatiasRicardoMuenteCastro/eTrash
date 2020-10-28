@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View,  
-	 StyleSheet, 
-	 Animated, 
-	 Text, 
-	 StatusBar, 
-	 TouchableOpacity,
-	 Image,
-	 Platform } from 'react-native';
+	 	 StyleSheet, 
+	 	 Animated, 
+	 	 Text, 
+	 	 StatusBar, 
+	  	 TouchableOpacity,
+		 Image,
+	 	 Platform } from 'react-native';
 
 import { useRoute, useNavigation } from '@react-navigation/native';
 
@@ -16,11 +16,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import ImagePicker from 'react-native-image-picker';
 
+import AuthContext from '../../context/authContext'; 
 
 const Avatar = () => {
 
 	const navigation = useNavigation();
 	const route = useRoute();
+
+	const { signUpPoint } = useContext(AuthContext);
 
 	const [AnimProgress] = useState(new Animated.Value(0));
 	const [endAnim] = useState(new Animated.Value(1));
@@ -168,7 +171,13 @@ const Avatar = () => {
 						case 'user': 
 							navigation.navigate('DiscardMainUser');
 						break;
-						
+						case 'point':
+							signUpPoint();
+						break;
+						case 'company':
+							navigation.navigate('DiscardMainCompany');
+						break;
+							
 					}
 
 				}}>

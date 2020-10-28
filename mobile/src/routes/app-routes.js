@@ -19,7 +19,7 @@ import SwitchCollector from '../pages/companies/switchCollector';
 import InvalidCnpj from '../pages/companies/invalidCnpj';
 import DiscardCompany from '../pages/companies/discards';
 import UserTypeSignIn from '../pages/signIn/userTypeSignIn';
-import UserMain from '../pages/users/main';
+import LoadingDiscards from '../pages/loadingPages/loadingDiscards';
 
 
 
@@ -52,7 +52,7 @@ const AppRoutes = () => {
 				<AppStack.Screen name="InvalidCnpj" component={InvalidCnpj} />
 				<AppStack.Screen name="DiscardCompany" component={DiscardCompany} />
 				<AppStack.Screen name="UserTypeSignIn" component={UserTypeSignIn} />
-				<AppStack.Screen name="UserMain" component={UserMain} />
+				<AppStack.Screen name="LoadingDiscards" component={LoadingDiscards} />
 			</AppStack.Navigator>
 	);
 

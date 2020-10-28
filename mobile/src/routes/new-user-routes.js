@@ -2,6 +2,8 @@ import React from 'react';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
+
+import LoadingStartApplication from '../pages/loadingPages/loadingStartApplication'
 import Slider from '../pages/slider/index';
 import SignOption from '../pages/signOption/index';
 import ChooseUser from '../pages/chooseUser/index';
@@ -20,7 +22,7 @@ import SwitchCollector from '../pages/companies/switchCollector';
 import InvalidCnpj from '../pages/companies/invalidCnpj';
 import DiscardCompany from '../pages/companies/discards';
 import UserTypeSignIn from '../pages/signIn/userTypeSignIn';
-import UserMain from '../pages/users/main';
+import LoadingDiscards from '../pages/loadingPages/loadingDiscards' 
 
 const NewUserStack = createStackNavigator();
 
@@ -33,6 +35,7 @@ const NewUserRoutes = () => {
 				backgroundColor: '#ffffff'
 			}
 			}} >
+			<NewUserStack.Screen name="LoadingStartApplication" component={LoadingStartApplication} />
 			<NewUserStack.Screen name="Slider" component={Slider} />
 			<NewUserStack.Screen name="SignOption" component={SignOption} />
 			<NewUserStack.Screen name="ChooseUser" component={ChooseUser} /> 
@@ -51,7 +54,7 @@ const NewUserRoutes = () => {
 			<NewUserStack.Screen name="InvalidCnpj" component={InvalidCnpj} />
 			<NewUserStack.Screen name="DiscardCompany" component={DiscardCompany} />
 			<NewUserStack.Screen name="UserTypeSignIn" component={UserTypeSignIn} />
-			<NewUserStack.Screen name="UserMain" component={UserMain} />
+			<NewUserStack.Screen name="LoadingDiscards" component={LoadingDiscards} />
 		</NewUserStack.Navigator>
 	);
 }

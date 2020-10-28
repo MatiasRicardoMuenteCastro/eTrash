@@ -101,13 +101,14 @@ const SignOption = () => {
 				]}>
 
 				<Text style={styles.textCentral}>{centralTextStr}</Text>
-			</Animated.View>
+				
+				<LottieView 
+					source={require('../../assets/animations/earth.json')} 
+					style={styles.earthAnimation}
+					autoPlay loop
+				/>
 
-			<LottieView 
-				source={require('../../assets/animations/earth.json')} 
-				style={styles.earthAnimation}
-				autoPlay loop
-			/>
+			</Animated.View>
 
 			<Animated.View style={[
 				styles.footer,
@@ -177,9 +178,9 @@ const styles = StyleSheet.create({
 		right: 0,
 		width: 50,
 		position: 'absolute',
-		marginRight: 50,
-		marginTop: 40,
-		left: 110
+		marginRight: 80,
+		marginTop: 80,
+		left: 95
 	},
 	footer: {
 		marginTop: 100,

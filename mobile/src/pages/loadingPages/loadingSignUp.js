@@ -42,7 +42,7 @@ const LoadingSignUp = () => {
 			name: route.params.name,
 			email: route.params.email,
 			passwordInput: route.params.passwordInput,
-			discarts: route.params.discarts, 
+			discarts: route.params.discards, 
 			rua: route.params.rua,
 			numero: route.params.numero,
 			country: country,
@@ -54,7 +54,7 @@ const LoadingSignUp = () => {
 		});
 
 		navigation.navigate('Avatar', {
-			user: 'discardPoint',
+			user: 'point',
 			welcome: response.data.welcome,
 			token: response.data.token,
 			id: response.data.id,

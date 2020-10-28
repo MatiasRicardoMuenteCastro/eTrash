@@ -11,7 +11,9 @@ import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faPlus, faTrash, faRecycle, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
 import AsyncStorage from '@react-native-community/async-storage';
+
 import api from '../../services/api';
 
 const DiscardMainPoints = () => {
@@ -25,6 +27,7 @@ const DiscardMainPoints = () => {
 	const [discardInput, setDiscardInput] = useState();
 	const [titleOpacity] = useState(new Animated.Value(0));
 	const [showTitle] = useState(new Animated.ValueXY({x: 0, y: 80}));
+	const [readyButtonDisplay, setReadyButtonDisplay] = useState({ display: 'none' });
 
 	useEffect(() => {
 		Animated.parallel([
@@ -42,6 +45,8 @@ const DiscardMainPoints = () => {
 			})
 		]).start();
 	}, []);
+
+
 		
 	return (
 		<View style={styles.container}> 
@@ -62,11 +67,11 @@ const DiscardMainPoints = () => {
 						showsHorizontalScrollIndicator={false}
 						contentContainerStyle={{paddingHorizontal: 110}}
 					>
-					<RectButton style={styles.readyBtn} onPress={async () => {
+					<RectButton style={[styles.readyBtn, readyButtonDisplay]} onPress={async () => {
 						navigation.navigate('LoadingSignUp', {
 							name: route.params.usernameTextInput,
 							passwordInput: route.params.passwordTextInput,
-							discarts: discards,
+							discards: discards,
 							rua: route.params.streetInput,
 							numero: route.params.numberInput,
 							email: route.params.emailInput,
@@ -107,6 +112,7 @@ const DiscardMainPoints = () => {
 						discards.unshift(discardInput);
 						setCountList(discards.length);
 						inputField.current.clear();
+						setDiscardInput('');
 						
 					}
 				}}>
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		width: 400,
 		height: 150,
-		backgroundColor: '#ffffff',
+		backgroundColor: '#38c172',
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderBottomLeftRadius: 130,

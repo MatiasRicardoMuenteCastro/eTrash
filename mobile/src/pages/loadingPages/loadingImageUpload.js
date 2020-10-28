@@ -9,11 +9,15 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 
 import AuthContext from '../../context/authContext';
 
+import LottieView from 'lottie-react-native';
+
 
 const LoadingImageUpload = () => {
 
 	const route = useRoute();
 	const navigation = useNavigation();
+
+	const { signUpPoint } = useContext(AuthContext);
 
 	const imageUpload = async () => {
 
@@ -22,6 +26,8 @@ const LoadingImageUpload = () => {
 
 			const userId = await AsyncStorage.getItem('@id');
 			const userToken = await AsyncStorage.getItem('@token');
+
+			console.log(userId);
 
 			const formImage = new FormData();
 
@@ -55,6 +61,21 @@ const LoadingImageUpload = () => {
 						'Content-Type': 'multipart/form-data'
 					}
 				});
+
+				navigation.navigate('DiscardCompany');
+			}
+
+
+			if(route.params.user == 'point'){
+				const response = await api.post('/point/upload', formImage, {
+					headers: {
+						'authentication': `Bearer ${userToken}`,
+						'authorization': userId,
+						'Content-Type': 'multipart/form-data'
+					}
+				});
+
+				signUpPoint();
 			}
 
 		}catch(error){
@@ -62,8 +83,13 @@ const LoadingImageUpload = () => {
 		}
 	}
 
-	useEffect( async () => {
-		await setTimeout(imageUpload, 1000);
+	useEffect(() => {
+		const upload = async () => {
+			await setTimeout(imageUpload, 1000);
+		}
+
+		upload();
+
 	}, []);
 
 
@@ -72,7 +98,7 @@ const LoadingImageUpload = () => {
 	return (
 		<View style={styles.container}>
 			<StatusBar barStyle="dark-content" backgroundColor="white" />
-			<ActivityIndicator color="#38c172" size="large" /> 
+			<LottieView source={require('../../assets/animations/robot.json')} autoPlay loop  />
 			<Text style={styles.awaitText}>Aguarde um pouco...</Text>
 		</View>
 	);
@@ -90,7 +116,7 @@ const styles = StyleSheet.create({
 		color: '#38c172',
 		fontSize: 15,
 		fontFamily: 'Roboto-Bold',
-		marginTop: 10
+		marginTop: 220
 	}
 });
 

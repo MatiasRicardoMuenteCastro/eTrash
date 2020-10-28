@@ -68,8 +68,12 @@ const DiscardMainUser = () => {
 						contentContainerStyle={{paddingHorizontal: 110}}
 					>
 					<RectButton style={styles.readyBtn} onPress={() => {
-						signUpUser();
-						console.log(signed);
+						if(discards != []){ 
+							navigation.navigate('LoadingDiscards', {
+								discards: discards,
+								user: 'user'
+							});
+						}
 					}} >
 						<FontAwesomeIcon style={styles.readyIcon} icon={ faCheck } size={25} />
 						<Text style={styles.readyText}>Pronto</Text>
@@ -114,7 +118,7 @@ const DiscardMainUser = () => {
 					style={styles.input}
 					value={discardInput}
 					onChangeText={text => setDiscardInput(text)}
-					placeholder="Adicione sua coleta aqui"
+					placeholder="Adicione seus descartes aqui"
 					ref={inputField}
 				/>
 			</Animated.View>

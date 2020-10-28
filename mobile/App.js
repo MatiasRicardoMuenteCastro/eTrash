@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+
+import React from 'react';
 import { StatusBar } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,9 +13,6 @@ import { AuthProvider } from './src/context/authContext';
 
 const App = () => {
 
-	useEffect( async () => {
-		await AsyncStorage.clear();
-	}, []);
 
 
     return (

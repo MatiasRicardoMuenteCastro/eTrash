@@ -2,14 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 
-const UserMain = () => {
+const Main = () => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.mainTxt}>Main</Text>
-		</View> 
+		</View>
 	);
-}	
-
+}
 
 const styles = StyleSheet.create({
 	container: {
@@ -18,13 +17,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	mainTxt: {
+		color: 'black',
 		fontSize: 20,
-		fontFamily: 'Roboto-Bold',
-		color: 'black'
+		fontFamily: 'Roboto-Bold'
 	}
 });
 
-
-
-
-export default UserMain;
+export default Main;

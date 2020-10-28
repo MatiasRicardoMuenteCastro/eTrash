@@ -83,17 +83,17 @@ const SignIn = () => {
 					if(email != null && passwordInput != null && email != "" && passwordInput != ""){
 						navigation.navigate('UserTypeSignIn', {
 							email: email,
-							passwordInput: passwordInput,
-							country: route.params.country,
-							city: route.params.city,
-							region: route.params.region,
-							latitude: route.params.latitude,
-							longitude: route.params.longitude 
+							passwordInput: passwordInput
 						});
 					}
 				}}>
 					<Text style={styles.entryText}>Entrar</Text>
 				</TouchableOpacity>
+				
+				<TouchableOpacity style={styles.forgotPasswordBtn} onPress={() => {}}>
+					<Text style={styles.forgotPasswordTxt}>Esqueceu sua senha?</Text>
+				</TouchableOpacity>
+
 			</View>
 		</Animated.View>
 	);
@@ -250,6 +250,20 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		color: '#38c172'
 	},
+	forgotPasswordBtn: {
+		width: 150,
+		height: 30,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginTop: 180,
+		
+	},
+	forgotPasswordTxt: {
+		color: '#38c172',
+		fontSize: 15,
+		fontFamily: 'Roboto-Medium'
+	}
+
 });
 
 export default SignIn;

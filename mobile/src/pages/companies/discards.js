@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, 
 	     Text, 
 	     StyleSheet, 
@@ -11,8 +11,10 @@ import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faPlus, faTrash, faRecycle, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
 import AsyncStorage from '@react-native-community/async-storage';
-import api from '../../services/api';
+
+import AuthContext from '../../context/authContext';
 
 const DiscardCompany = () => {
 	
@@ -20,11 +22,14 @@ const DiscardCompany = () => {
 	const route = useRoute();
 	const inputField = useRef(null);
 
+	const { signUpCompany } = useContext(AuthContext);
+
 	const [discards] = useState([]);
 	const [countList, setCountList] = useState(discards.length);
 	const [discardInput, setDiscardInput] = useState();
 	const [titleOpacity] = useState(new Animated.Value(0));
 	const [showTitle] = useState(new Animated.ValueXY({x: 0, y: 80}));
+
 
 	useEffect(() => {
 		Animated.parallel([
@@ -62,20 +67,12 @@ const DiscardCompany = () => {
 						showsHorizontalScrollIndicator={false}
 						contentContainerStyle={{paddingHorizontal: 110}}
 					>
-					<RectButton style={styles.readyBtn} onPress={async () => {
-						navigation.navigate('LoadingSignUp', {
-							cnpj: route.params.cnpj,
-							passwordInput: route.params.passwordTextInput,
-							discarts: discards,
-							country: route.params.localCountry,
-							city: route.params.localCity,
-							region: route.params.localRegion,
-							latitude: route.params.localLatitude,
-							longitude: route.params.localLongitude,
-							user: route.params.user
-						});	
-						
-					}} >
+					<RectButton style={styles.readyBtn} onPress={() => 
+						navigation.navigate('LoadingDiscards', {
+							user: 'company',
+							discards: discards
+						})
+					}>
 						<FontAwesomeIcon style={styles.readyIcon} icon={ faCheck } size={25} />
 						<Text style={styles.readyText}>Pronto</Text>
 					</RectButton> 
@@ -160,7 +157,8 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 		fontFamily: 'Roboto-Bold',
 		color: 'black',
-		marginTop: 40
+		marginTop: 40,
+		marginLeft: 50
 	},
 	titleIcon: {
 		color: 'black',
