@@ -6,7 +6,8 @@ const path = require('path');
 
 module.exports = {
 	userUpdate: async (req, res) => {
-		const { userID, userDiscarts } = req.body;
+		const userID = req.headers.authorization;
+		const {userDiscarts} = req.body;
 		const userIDDB = await connection('users').where('id', userID)
 		.select('id').first();
 
@@ -21,7 +22,8 @@ module.exports = {
 	},
 
 	companyUpdate: async (req, res) => {
-		const { companyID, companyDiscarts } = req.body;
+		const companyID = req.headers.authorization;
+		const {companyDiscarts} = req.body;
 		const companyIDDB = await connection('companies').where('id', companyID)
 		.select('id').first();
 
@@ -36,7 +38,8 @@ module.exports = {
 	},
 	
 	pointUpdate: async (req, res) => {
-		const { pointID, pointDiscarts } = req.body;
+		const pointID = req.headers.authorization;
+		const {pointDiscarts } = req.body;
 		const pointIDDB = await connection('discarts_points').where('id', pointID).select('id')
 		.first();
 
@@ -94,9 +97,8 @@ module.exports = {
 		.select('discarts').first();
 
 		return res.json(pointDiscarts);
- 	},
-
-	searchPointForUser: async (req, res) => {
+	 },
+	 searchPointForUser: async (req, res) => {
 		const user_id = req.headers.authorization;
 		const userDiscartsDB = await connection('users').where('id', user_id)
 		.select('discarts').first();
@@ -118,8 +120,7 @@ module.exports = {
 				'longitude'
 		       );
 
-
-		if (userDiscartsDB.discarts[0] == null) {
+		if (userDiscartsDB.discarts == null) {
 			return res.status(400).json({error: 'Não encontramos seus descartes'});
 		}
 
@@ -169,7 +170,7 @@ module.exports = {
 			 	}
 		     });
 
-		      if (foundPoint[0] == "") {
+		      if (foundPoints[0] == "") {
 		          return res.status(400).json({error: 'Nenhum ponto de coleta disponível'});
 		      }
 				
