@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
 	View,
 	Text,
@@ -15,6 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMapMarkedAlt, faSortNumericUp, faArrowLeft, faRoad, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import LottieView from 'lottie-react-native';
 
+import AuthContext from '../../context/authContext';
+import ErrorInputBox from '../../components/errorInputBox';
 
 const Address = () => {
 
@@ -25,12 +27,15 @@ const Address = () => {
 	const [number, setNumber] = useState();
 	const [street, setStreet] = useState();
 	const [email, setEmail] = useState();
+	const [errorEmail, setErrorEmail] = useState();
 
 	const navigation = useNavigation();
 	const route = useRoute();
 	const input1 = useRef(null);
 	const input2 = useRef(null);
 	const input3 = useRef(null);
+
+	const { error } = useContext(AuthContext);
 
 	useEffect(() => {
 		Animated.parallel([
@@ -56,7 +61,23 @@ const Address = () => {
 			})
 		]).start();
 	}, []);
-	
+
+
+	const renderErrorBox = () => {
+		if(error != undefined && route.params.error != undefined){
+			return (
+				<ErrorInputBox>
+					<Text style={styles.errorText}>{error.error}</Text>
+				</ErrorInputBox>
+			);
+		}
+	}
+
+	useEffect(() => {
+		if(error != undefined && route.params.error != undefined){
+			return setErrorEmail({ borderColor: 'red' });
+		}
+	}, [error]);
 
 
 	return (
@@ -77,7 +98,7 @@ const Address = () => {
 				<Text style={styles.text}>Endereço e contato</Text>
 				<Text style={styles.numberLabel}>Número (opcional)</Text>
 				<Text style={styles.streetLabel}>Rua</Text>
-				<Text style={styles.emailLabel}>Email</Text>
+				<Text style={styles.emailLabel}>E-mail</Text>
 				<TextInput
 					style={styles.streetInput}
 					onChangeText={text => setStreet(text)}
@@ -103,7 +124,7 @@ const Address = () => {
 				/>
 				<FontAwesomeIcon style={styles.numberIcon} icon={ faSortNumericUp } size={20} />
 				<TextInput 
-					style={styles.emailInput}
+					style={[styles.emailInput, errorEmail]}
 					onChangeText={text => setEmail(text)}
 					value={email} 
 					placeholder="Seu e-mail"
@@ -144,6 +165,7 @@ const Address = () => {
 
 					<Text style={styles.textFooter}>Lembre-se sua localização é importante{'\n'}para que pessoas te encontrem</Text>
 			</Animated.View>
+			{renderErrorBox()}
 		  </View>
 		
 	);
@@ -263,7 +285,7 @@ const styles = StyleSheet.create({
 		marginTop: 110,
 		marginLeft: 150 ,
 		color: 'black',
-		fontFamily: 'Roboto-Medium',
+		fontFamily: 'Roboto-Bold',
 		paddingLeft: 45
 	},
 	streetIcon: {
@@ -304,7 +326,7 @@ const styles = StyleSheet.create({
 		marginTop: 200,
 		marginLeft: 150,
 		color: 'black',
-		fontFamily: 'Roboto-Medium',
+		fontFamily: 'Roboto-Bold',
 		paddingLeft: 45,	
 	},
 	emailInput: {
@@ -319,7 +341,7 @@ const styles = StyleSheet.create({
 		marginTop: 290,
 		marginLeft: 150,
 		color: 'black',
-		fontFamily: 'Roboto-Medium',
+		fontFamily: 'Roboto-Bold',
 		paddingLeft: 45,	
 	},
 	emailIcon:{
@@ -379,6 +401,11 @@ const styles = StyleSheet.create({
 		marginLeft: 25,
 		marginTop: 40
 		
+	},
+	errorText: {
+		color: 'white',
+		fontSize: 15,
+		fontFamily: 'Roboto-Medium'
 	}
 });
 

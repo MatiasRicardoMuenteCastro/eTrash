@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
+import AuthContext from '../../context/authContext';
+
 const LoadingStartApplication = () => {
 
 	const navigation = useNavigation();
 
 	const [loading, setLoading] = useState(true);
+
+	const { signed , signUpUser } = useContext(AuthContext);
 
 	const renderLoading = () => {
 		while(loading){
@@ -27,24 +31,24 @@ const LoadingStartApplication = () => {
 		navigation.navigate('SignOption');
 	}
 
+	
 	useEffect(() => {
-		const getNewUserData = async () => {
-			try {
-				const userStorage = await AsyncStorage.getItem('@user');
+		const getAuthData = async () => {
+			const userStorage = await AsyncStorage.getItem('@user');
+			const signInUser = await AsyncStorage.getItem('@signIn');
+			console.log(signInUser);
 				
-				if(userStorage != null){
-					setTimeout(navigateToSignOption, 1000);
-				}else{
-					setTimeout(navigateToSlider, 1000);
-				}
-			}catch(error){
-				console.log(error);
-			}
+			if(signInUser == 'true'){
+				signUpUser(true);
 
+			}else if(signInUser == null && userStorage != null){
+				setTimeout(navigateToSignOption, 3000);
+			}else{
+				setTimeout(navigateToSlider, 1000);
+			}
 		}
-		
-		getNewUserData();
-		
+			
+		getAuthData();
 	}, []);
 
 

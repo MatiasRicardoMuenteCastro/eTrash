@@ -1,22 +1,29 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 
 import api from '../services/api';
 
 import ipApi from '../services/ip-api';
+
+import AsyncStorage from '@react-native-community/async-storage';
 
 const AuthContext = createContext({ 
 	signed: false, 
 	signUpUser: '',
 	signUpPoint: '',
 	signUpCompany: '',
+	signInUser: '',
+	signInCompany: '',
+	signInPoint: '',
 	getUserLocation: '', 
 	country: '',
 	city: '',
 	region: '',
 	latitude: 0,
-	longitude: 0
+	longitude: 0,
+	error: '',
+	setError: '',
+	setSigned: ''
   });
-
 
 export const AuthProvider = ({children}) => {
 
@@ -26,44 +33,72 @@ export const AuthProvider = ({children}) => {
 	const [region, setRegion] = useState();
 	const [latitude, setLatitude] = useState();
 	const [longitude, setLongitude] = useState();
+	const [error, setError] = useState();
 
-	const signInUser = async (email, password) => {
+
+	const signInUser = async (email, password, latitute, longitude) => {
 		const response = await api.post('/session', {
 			email: email,
-			passwordInput: password
+			passwordInput: password,
+			localLat: latitude,
+			localLon: longitude
 		})
-		.then(function(response){
+		.then(async function(response){
 			console.log(response.data);
+			await AsyncStorage.setItem('@token', response.data.token);
+			await AsyncStorage.setItem('@id', response.data.id);
+			await AsyncStorage.setItem('@user', 'user');
+			await AsyncStorage.setItem('@signIn', 'true');
+			return setSigned(true);
 		})
 		.catch(function(error){
-			console.log(error);
+			console.log(error.response.data);
+			setError(error.response.data);
 		})
 
 	}
 
-	const signInCompany = async (email, password) => {
+	const signInCompany = async (email, password, latitute, longitude) => {
 		const response = await api.post('/session/companies', {
 			email: email,
-			passwordInput: password
+			passwordInput: password,
+			localLat: latitude,
+			localLon: longitude
 		})
-		.then(function(response){
+		.then(async function(response){
 			console.log(response.data);
+			await AsyncStorage.setItem('@token', response.data.token);
+			await AsyncStorage.setItem('@id', response.data.id);
+			await AsyncStorage.setItem('@user', 'company');
+			await AsyncStorage.setItem('@signIn', 'true');
+			return setSigned(true);
 		})
 		.catch(function(error){
-			console.log(error);
+			console.log(error.response.data);
+			setError(error.response.data);
+						
 		})
 	} 
 
-	const signInPoint = async (email, password) => {
-		const response = await api.post('/session/points', {
+	const signInPoint = async (email, password, latitute, longitude) => {
+		const response = await api.post('/session/point', {
 			email: email,
-			passwordInput: password
+			passwordInput: password,
+			localLat: latitude,
+			localLon: longitude
 		})
-		.then(function(response){
+		.then(async function(response){
 			console.log(response.data);
+			await AsyncStorage.setItem('@token', response.data.token);
+			await AsyncStorage.setItem('@id', response.data.id);
+			await AsyncStorage.setItem('@user', 'point');
+			await AsyncStorage.setItem('@signIn', 'true');
+			return setSigned(true);
 		})
 		.catch(function(error){
-			console.log(error);
+			console.log(error.response.data);
+			setError(error.response.data);
+			
 		})
 	}
 
@@ -97,12 +132,18 @@ export const AuthProvider = ({children}) => {
 			signUpUser: signUpUser,
 			signUpPoint: signUpPoint,
 			signUpCompany: signUpCompany,
+			signInUser: signInUser,
+			signInCompany: signInCompany,
+			signInPoint: signInPoint,
 			getUserLocation: getUserLocation,
 			country: country,
 			city: city,
 			region: region,
 			latitude: latitude,
-			longitude: longitude
+			longitude: longitude,
+			error: error,
+			setError: setError,
+			setSigned: setSigned
 		}}>
 			{children}
 		</AuthContext.Provider>

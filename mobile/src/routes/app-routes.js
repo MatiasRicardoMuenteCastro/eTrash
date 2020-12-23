@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import SignOption from '../pages/signOption/index';
@@ -20,7 +19,7 @@ import InvalidCnpj from '../pages/companies/invalidCnpj';
 import DiscardCompany from '../pages/companies/discards';
 import UserTypeSignIn from '../pages/signIn/userTypeSignIn';
 import LoadingDiscards from '../pages/loadingPages/loadingDiscards';
-
+import LoadingSignIn from '../pages/loadingPages/loadingSignIn';
 
 
 const AppStack = createStackNavigator();
@@ -53,6 +52,7 @@ const AppRoutes = () => {
 				<AppStack.Screen name="DiscardCompany" component={DiscardCompany} />
 				<AppStack.Screen name="UserTypeSignIn" component={UserTypeSignIn} />
 				<AppStack.Screen name="LoadingDiscards" component={LoadingDiscards} />
+				<AppStack.Screen name="LoadingSignIn" component={LoadingSignIn} />
 			</AppStack.Navigator>
 	);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, 
 	     Text, 
 	     StyleSheet, 
@@ -11,10 +11,9 @@ import { View,
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faPlus, faTrash, faRecycle, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import api from '../../services/api';
+import { faPlus, faTrash, faRecycle, faCheck } from '@fortawesome/free-solid-svg-icons';
 
-import AuthContext from '../../context/authContext';
+
 
 const DiscardMainUser = () => {
 	
@@ -22,7 +21,7 @@ const DiscardMainUser = () => {
 	const route = useRoute();
 	const inputField = useRef(null);
 
-	const { signed, signUpUser } = useContext(AuthContext);
+
 
 	const [discards] = useState([]);
 	const [countList, setCountList] = useState(discards.length);

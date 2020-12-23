@@ -18,10 +18,10 @@ const LoadingDiscards = () => {
 
 	const { signUpUser, signUpCompany, signUpPoint } = useContext(AuthContext);
 
-	const [loading, setLoading] = useState(true);
+	const [loading] = useState(true);
 
 	useEffect(() => {
-		const uploadDiscardsNewUser = async () => {
+		const updateDiscardsNewUser = async () => {
 			const userType = route.params.user;
 
 			try {
@@ -29,56 +29,71 @@ const LoadingDiscards = () => {
 
 				if (userType == 'company') {
 
-					const userId = await AsyncStorage.getItem('@id');
-					const userToken = await AsyncStorage.getItem('@token');
+					const companyID = await AsyncStorage.getItem('@id');
+					const companyToken = await AsyncStorage.getItem('@token');
 
-					discards = { discards: route.params.discards  }
+				    companyDiscarts = route.params.discards;  
 
-					const response = await api.put('/discarts/company/update', discards,  {
-						headers: {
-							authorization: userId,
-							authentication: `Bearer ${userToken}`
-						}
+					try { 
+						const response = await api.put('/discarts/company/update', { pointDiscarts: pointDiscarts },  {
+							headers: {
+								authorization: companyID,
+								authentication: `Bearer ${companyToken}`
+							}
 
-					});
+						});
 
-					signUpCompany();
+						signUpCompany();
+
+					} catch(error){
+						console.log(error);
+					}
 
 				}
 
 				if (userType == 'user') {
 
-					const userId = await AsyncStorage.getItem('@id');
+					const userID = await AsyncStorage.getItem('@id');
 					const userToken = await AsyncStorage.getItem('@token');
 			
-					discards = { discards: route.params.discards  }
+					userDiscarts = route.params.discards; 
 
-					const response = await api.put('/discarts/user/update', discards, {
-						headers: {
-							authorization: userId,
-							authentication: `Bearer ${userToken}`
-						}
-					});
+					try {
+						const response = await api.put('/discarts/user/update', { userDiscarts: userDiscarts } , {
+							headers: {
+								authorization: userID,
+								authentication: `Bearer ${userToken}`
+							}
+						});
 
-					signUpUser();
+						signUpUser();
+
+					} catch(error) {
+						console.log(error);
+					}
 
 				}
 				if (userType == 'point') {
 
-					const userId = await AsyncStorage.getItem('@id');
-					const userToken = await AsyncStorage.getItem('@token');
+					const pointID = await AsyncStorage.getItem('@id');
+					const pointToken = await AsyncStorage.getItem('@token');
 					
+					pointDiscarts = route.params.discards ; 
 
-					discards = { discards: route.params.discards  }
-
-					const response = await api.put('/discarts/point/update', discards, {
-						headers: {
-							authorization: userId,
-							authentication:`Bearer ${userToken}`
-						}
-					});
+					try {
+						const response = await api.put('/discarts/point/update', { pointDiscarts: pointDiscarts }, {
+							headers: {
+								authorization: pointID,
+								authentication:`Bearer ${pointToken}`
+							}
+						});
 					
-					signUpPoint();
+						signUpPoint();
+
+					} catch(error){
+						console.log(error);
+					}
+
 				}
 
 			}
@@ -90,7 +105,7 @@ const LoadingDiscards = () => {
 
 		}
 
-		uploadDiscardsNewUser();
+		updateDiscardsNewUser();
 	}, []);
 
 	const renderLoading = () => {

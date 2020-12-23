@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, 
 		 Text, 
 		 StyleSheet, 
@@ -16,7 +16,6 @@ import { faArrowLeft,
 
 import { useNavigation } from '@react-navigation/native';
 
-
 const SignUpUser = () => {
 
 	const navigation = useNavigation();
@@ -30,6 +29,7 @@ const SignUpUser = () => {
 	
 	const input1 = useRef(null);
 	const input2 = useRef(null);
+
 
 	useEffect(() => {
 		Animated.parallel([
@@ -57,7 +57,6 @@ const SignUpUser = () => {
 			})
 		]).start();
 	}, []);
-
 
 	return (
 		<KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -287,7 +286,11 @@ const styles = StyleSheet.create({
 		fontFamily: 'Roboto-Bold',
 		fontSize: 20
 	},
-	
+	errorText: {
+		color: 'white',
+		fontSize: 15,
+		fontFamily: 'Roboto-Medium',
+	}
 
 });
 

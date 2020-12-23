@@ -11,7 +11,7 @@ const LoadingSignUp = () => {
 	const route = useRoute();
 	const navigation = useNavigation();
 
-	const { country, city, region, latitude, longitude } = useContext(AuthContext); 
+	const { country, city, region, latitude, longitude, setError } = useContext(AuthContext); 
 
 	const [loadingViewOpacity] = useState(new Animated.Value(0));
 	const [loadingViewAnim] = useState(new Animated.ValueXY({x: 0, y: 80}));
@@ -63,6 +63,11 @@ const LoadingSignUp = () => {
 
 		}catch(error){
 			console.log(error);
+			setError(error.response.data);
+			navigation.navigate('Address', {
+				error: 'an error'
+			});
+			
 		}
 	}
 
@@ -136,6 +141,12 @@ const LoadingSignUp = () => {
 
 		}catch(error){
 			console.log(error);
+			setError(error.response.data);
+			navigation.navigate('UserEmail', {
+				error: 'an error'
+			});
+			
+			
 		}
 
 	}

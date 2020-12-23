@@ -22,7 +22,8 @@ import SwitchCollector from '../pages/companies/switchCollector';
 import InvalidCnpj from '../pages/companies/invalidCnpj';
 import DiscardCompany from '../pages/companies/discards';
 import UserTypeSignIn from '../pages/signIn/userTypeSignIn';
-import LoadingDiscards from '../pages/loadingPages/loadingDiscards' 
+import LoadingDiscards from '../pages/loadingPages/loadingDiscards'
+import LoadingSignIn from '../pages/loadingPages/loadingSignIn'; 
 
 const NewUserStack = createStackNavigator();
 
@@ -55,6 +56,7 @@ const NewUserRoutes = () => {
 			<NewUserStack.Screen name="DiscardCompany" component={DiscardCompany} />
 			<NewUserStack.Screen name="UserTypeSignIn" component={UserTypeSignIn} />
 			<NewUserStack.Screen name="LoadingDiscards" component={LoadingDiscards} />
+			<NewUserStack.Screen name="LoadingSignIn" component={LoadingSignIn} />
 		</NewUserStack.Navigator>
 	);
 }

@@ -10,16 +10,17 @@ import { View,
 
 import { RectButton } from 'react-native-gesture-handler';
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 
 const UserTypeSignIn = () => {
 
 	const navigation = useNavigation();
+	const route = useRoute();
 	
 	const [welcomeTextDisplay, setWelcomeTextDisplay] = useState({ display: 'flex' });
 	const [showWelcomTextAnim] = useState(new Animated.ValueXY({x: 0, y: 80}));
@@ -35,7 +36,7 @@ const UserTypeSignIn = () => {
 	const [textUserSelected, setTextUserSelected] = useState();
 	const [textPointSelected, setTextPointSelected] = useState();
 
-	
+
 	const removeWelcomeTextScreen = () => {
 		setWelcomeTextDisplay({ display: 'none' });
 	}
@@ -111,15 +112,11 @@ const UserTypeSignIn = () => {
 
 	}, []);
 
+	
+
 	return (
 		<View style={styles.container}>
 			<StatusBar backgroundColor="white"  barStyle="dark-content" /> 
-
-			<View style={styles.header}> 
-				<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-					<FontAwesomeIcon style={styles.backIcon} icon={faArrowLeft} />
-				</TouchableOpacity>
-			</View>
 
 			<Image source={require('../../assets/pictures/trash.png')}
 				style={styles.image}
@@ -146,6 +143,15 @@ const UserTypeSignIn = () => {
 					setTextPointSelected({});
 					setTextUserSelected({});
 					setTextCompanySelected({ color: 'white' });
+
+					const userType = 'company';
+					
+					navigation.navigate('LoadingSignIn', {
+						user: userType,
+						email: route.params.email,
+						password: route.params.passwordInput
+					});
+
 				}}>
 					<Image 
 						style={styles.companyImage}
@@ -153,7 +159,6 @@ const UserTypeSignIn = () => {
 					/>
 
 					<Text style={[styles.companyText, textCompanySelected]}>Empresa</Text>
-
 				</RectButton>
 
 				<RectButton style={[styles.userOption, userSelected]} onPress={() => {
@@ -163,6 +168,15 @@ const UserTypeSignIn = () => {
 					setTextCompanySelected({});
 					setTextPointSelected({});
 					setTextUserSelected({ color: 'white' });
+					
+					const userType = 'user';
+
+					navigation.navigate('LoadingSignIn', {
+						user: userType,
+						email: route.params.email,
+						password: route.params.passwordInput
+					});
+
 				}}>
 					<Image 
 						style={styles.userImage}
@@ -170,7 +184,6 @@ const UserTypeSignIn = () => {
 					/>
 
 					<Text style={[styles.userText, textUserSelected]}>Usuário</Text>
-
 				</RectButton>
 
 				<RectButton style={[styles.pointOption, pointSelected]} onPress={() => {
@@ -180,6 +193,15 @@ const UserTypeSignIn = () => {
 					setTextUserSelected({});
 					setTextCompanySelected({});
 					setTextPointSelected({ color: 'white' });
+					
+					const userType = 'point';
+
+					navigation.navigate('LoadingSignIn', {
+						user: userType,
+						email: route.params.email,
+						password: route.params.passwordInput
+					});
+
 				}}>
 					<Image 
 						style={styles.pointImage}
@@ -187,7 +209,6 @@ const UserTypeSignIn = () => {
 					/>
 
 					<Text style={[styles.pointText, textPointSelected]}>Ponto de Coleta</Text>
-
 				</RectButton>
 
 
@@ -205,30 +226,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	header: {
-		width: 400,
-		height: 100,
-		backgroundColor: 'gray',
-		justifyContent: 'center',
-		alignItems: 'center'
-	},
-	backButton: {
-		width: 60,
-		height: 50,
-		justifyContent: 'center',
-		alignItems: 'center',
-		left: 0,
-		position: 'absolute',
-		marginLeft: 30,
-		marginTop: 100,
-		backgroundColor: 'white',
-		borderRadius: 20
-
-	},
-	backIcon:{
-		color: '#38c172',
-		width: 200
-	},
 	image: {
 		width: 350,
 		height: 350,
@@ -236,10 +233,9 @@ const styles = StyleSheet.create({
 		borderRadius: 1000,
 		top: 0,
 		position: 'absolute'
-		
 	},
 	centralView: {
-		marginTop: 80,
+		marginTop: 150,
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: 500,
@@ -271,13 +267,35 @@ const styles = StyleSheet.create({
 		left: 0,
 		position: 'absolute'
 	},
+	readyView: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		right: 0,
+		top: 0,
+		position: 'absolute',
+		marginRight: 100,
+		marginTop: 120
+	},	
+	readyButton: {
+		backgroundColor: 'white',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 80,
+		height: 70,
+		borderRadius: 200,
+		borderWidth: 1,
+		borderColor: '#38c172',
+	},
+	readyIcon: {
+		color: '#38c172'
+	},
 	companyOption: {
 		width: 400,
 		height: 100,
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingLeft: 20,
-		marginTop: 200
+		marginTop: 220
 	},
 	companyImage: {
 		width: 90,
@@ -293,6 +311,46 @@ const styles = StyleSheet.create({
 		fontFamily: 'Roboto-Bold',
 		marginRight: 10
 	},
+	companyButton: {
+		backgroundColor: 'white',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 130,
+		height: 100,
+		right: 0,
+		position: 'absolute',
+		
+	},
+	companyButtonIcon: {
+		color: '#38c172',
+		marginRight: 20,
+	},
+	userButton: {
+		backgroundColor: 'white',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 130,
+		height: 100,
+		right: 0,
+		position: 'absolute',
+	},
+	userButtonIcon: {
+		color: '#38c172',
+		marginRight: 20,
+	},
+	pointButton: {
+		backgroundColor: 'white',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 130,
+		height: 120,
+		right: 0,
+		position: 'absolute',
+	},
+	pointButtonIcon: {
+		color: '#38c172',
+		marginRight: 20,
+	},		
 	userOption: {
 		width: 400,
 		height: 100,
@@ -300,7 +358,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		
 	},
-	userImage:{
+	userImage: {
 		width: 90,
 		height: 80,
 		borderRadius: 100,
@@ -315,7 +373,7 @@ const styles = StyleSheet.create({
 	},
 	pointOption: {
 		width: 400,
-		height: 100,
+		height: 110,
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingLeft: 30,
@@ -332,6 +390,11 @@ const styles = StyleSheet.create({
 	pointText: {
 		color: 'black',
 		fontSize: 18,
+		fontFamily: 'Roboto-Bold',
+	},
+	count: {
+		color: 'white',
+		fontSize: 15,
 		fontFamily: 'Roboto-Bold'
 	}
 

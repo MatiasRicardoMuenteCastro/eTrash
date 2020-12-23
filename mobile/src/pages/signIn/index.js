@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, 
 		 Text, 
 		 StyleSheet, 
@@ -11,6 +11,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'; 
 import { faArrowLeft, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
+import AuthContext from '../../context/authContext';
+import ErrorInputBox from '../../components/errorInputBox';
 
 const SignIn = () => {
 
@@ -18,13 +20,46 @@ const SignIn = () => {
 	const route = useRoute();
 	const input2 = useRef(null);
 
+	const { error } = useContext(AuthContext);
+
 	const [containerOpacity] = useState(new Animated.Value(0));
 	const [containerShow] = useState(new Animated.ValueXY({x: 0, y: 80}));
+
+	const [emailNull, setEmailNull] = useState();
+	const [passwordNull, setPasswordNull] = useState();
 
 	const [email, setEmail] = useState();
 	const [passwordInput, setPasswordInput] = useState();
 
+	console.log(route.params);
+	
+	const renderErrorBox = () => {
+		if(error != undefined && error != "" && route.params != undefined){
+			return (
+				<ErrorInputBox>
+					<Text style={styles.errorText}>{error.error}</Text>
+				</ErrorInputBox>
+			);
+		}
 
+	}
+
+	useEffect(() => {
+		if(error != undefined && error.error == 'Usuário não encontrado' && route.params != undefined){
+			return setEmailNull({ borderColor: 'red' });
+		}
+		if(error != undefined && error.error == 'Empresa não encontrada' && route.params != undefined){
+			return setEmailNull({ borderColor: 'red' });
+		}
+		if(error != undefined && error.error == 'Ponto de coleta não encontrado' && route.params != undefined){
+			return setEmailNull({ borderColor: 'red' });
+		}
+		if(error != undefined && error.error == 'Senha incorreta' && route.params != undefined){
+			return setPasswordNull({ borderColor: 'red' });
+		}
+	}, [error]);
+
+	
 	useEffect(() => {
 		Animated.parallel([
 			Animated.timing(containerOpacity, {
@@ -38,14 +73,17 @@ const SignIn = () => {
 				useNativeDriver: true
 			})
 		]).start();
+
+		
 	}, []); 
 
 	return (
 		<Animated.View style={[styles.container, { opacity: containerOpacity, transform: [ { translateY: containerShow.y } ] }]}>
 			<StatusBar backgroundColor="#38c172" barStyle="light-content"/> 
+
 			<View style={styles.center}>
 				<View style={styles.header}>	
-					<Text style={styles.appName}>ETrash</Text>
+					<Text style={styles.appName}>E-Trash</Text>
 					<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
 						<FontAwesomeIcon style={styles.backIcon} icon={ faArrowLeft } />
 					</TouchableOpacity>
@@ -56,7 +94,7 @@ const SignIn = () => {
 				<FontAwesomeIcon size={20} icon={ faEnvelope } style={styles.emailIcon} />
 				<Text style={styles.emailLabel}>Email</Text>
 				<TextInput 
-					style={styles.emailInput}
+					style={[styles.emailInput, emailNull]}
 					placeholder="Seu email"
 					placeholderTextColor="#38c172"
 					onChangeText={text => setEmail(text)}
@@ -70,7 +108,7 @@ const SignIn = () => {
 				<FontAwesomeIcon size={20} icon={ faLock } style={styles.passwordIcon} />
 				<Text style={styles.passwordLabel}>Senha</Text>
 				<TextInput 
-					style={styles.passwordInput}
+					style={[styles.passwordInput, passwordNull]}
 					placeholder="Sua senha"
 					placeholderTextColor="#38c172"
 					onChangeText={text => setPasswordInput(text)}
@@ -80,6 +118,12 @@ const SignIn = () => {
 				/>	
 
 				<TouchableOpacity style={styles.entryButton} onPress={() => {
+					if(email == "" || email == null){
+						setEmailNull({ borderColor: 'red' });
+					}
+					if(passwordInput == "" || passwordInput == null){
+						setPasswordNull({ borderColor: 'red' });
+					}
 					if(email != null && passwordInput != null && email != "" && passwordInput != ""){
 						navigation.navigate('UserTypeSignIn', {
 							email: email,
@@ -95,6 +139,7 @@ const SignIn = () => {
 				</TouchableOpacity>
 
 			</View>
+			{renderErrorBox()}
 		</Animated.View>
 	);
 };
@@ -262,8 +307,12 @@ const styles = StyleSheet.create({
 		color: '#38c172',
 		fontSize: 15,
 		fontFamily: 'Roboto-Medium'
+	},
+	errorText: {
+		color: 'white',
+		fontSize: 15,
+		fontFamily: 'Roboto-Medium'
 	}
-
 });
 
 export default SignIn;

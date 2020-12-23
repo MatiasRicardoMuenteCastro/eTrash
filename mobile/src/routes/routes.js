@@ -11,38 +11,40 @@ import AuthContext from '../context/authContext';
 
 const Routes = () => {
 	
-	const { signed } = useContext(AuthContext);
+	const { signed, setSigned } = useContext(AuthContext);
 	const [oldUser, setOldUser] = useState();
+	const [signInUser, setSignInUser] = useState(); 
 
-	const getUser = async () => {
-
-		try {
-			const user = await AsyncStorage.getItem('@user'); 
-			setOldUser(user);
-		} catch(error){
-			console.log(error);
+	
+	useEffect(() => {
+		const getUser = async () => {
+			try {
+				const user = await AsyncStorage.getItem('@user');
+				const signInUser = await AsyncStorage.getItem('@signIn');
+				setOldUser(user);
+				setSignInUser(signInUser);
+			} catch(error){
+				console.log(error);
+			}
 		}
-	}
-
-	useEffect( async () => {
-		await getUser();
+		getUser();
 	}, []);
 
 	console.log(signed);
 	console.log(oldUser);
 
+	
 	if(signed == false && oldUser == null){
 		return <NewUserRoutes />
 	}
 
-	else if (signed == true) {
+	else if (signed == true || signInUser == 'true') {
 		return <AuthRoutes />
 	}
 
 	else if(signed == false && oldUser != null) {
 		return <AppRoutes />
 	}
-
 
 }
 

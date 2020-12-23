@@ -10,11 +10,8 @@ import { View,
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faPlus, faTrash, faRecycle, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faRecycle, faCheck } from '@fortawesome/free-solid-svg-icons';
 
-import AsyncStorage from '@react-native-community/async-storage';
-
-import api from '../../services/api';
 
 const DiscardMainPoints = () => {
 	
@@ -143,7 +140,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		width: 400,
 		height: 150,
-		backgroundColor: '#38c172',
+		backgroundColor: 'white',
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderBottomLeftRadius: 130,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
 	View,
 	Text,
@@ -15,8 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeft, faEnvelope, faAddressBook } from '@fortawesome/free-solid-svg-icons';
 import LottieView from 'lottie-react-native';
 
-
-
+import ErrorInputBox from '../../components/errorInputBox';
+import AuthContext from '../../context/authContext';
 
 const UserEmail = () => {
 
@@ -25,11 +25,13 @@ const UserEmail = () => {
 	const [footerAnim] = useState(new Animated.ValueXY({x: 0, y: 100}));
 	const [footerOpacity] = useState(new Animated.Value(0)); 
 	const [email, setEmail] = useState();
+	const [emailError, setEmailError] = useState();
 
 	const navigation = useNavigation();
 	const route = useRoute();
 	const input1 = useRef(null);
 	
+	const { error } = useContext(AuthContext);
 
 	useEffect(() => {
 		Animated.parallel([
@@ -56,7 +58,21 @@ const UserEmail = () => {
 		]).start();
 	}, []);
 	
+	const renderErrorInputBox = () => {
+		if(error != '' && error != undefined && route.params.error != undefined){
+			return (
+				<ErrorInputBox>
+					<Text style={styles.errorText}>{error.error}</Text>
+				</ErrorInputBox>
+			);
+		}
+	}
 
+	useEffect(() => {
+		if(error != undefined && route.params.error != undefined && error.error == 'Email de usuário já cadastrado.'){
+			return setEmailError({ borderColor: 'red' });
+		}
+	}, [error]);
 
 	return (
 		  <View style={styles.container} behavior="padding"> 
@@ -74,9 +90,9 @@ const UserEmail = () => {
 				}>
 				<FontAwesomeIcon style={styles.iconTitle} icon={ faAddressBook } size={25} />
 				<Text style={styles.text}>Contato</Text>
-				<Text style={styles.emailLabel}>Email</Text>
+				<Text style={styles.emailLabel}>E-mail</Text>
 				<TextInput
-					style={styles.emailInput}
+					style={[styles.emailInput, emailError]}
 					onChangeText={text => setEmail(text)}
 					value={email}
 					placeholder="Seu melhor e-mail"
@@ -96,8 +112,8 @@ const UserEmail = () => {
 							email: email,
 							
 						});
-					
-
+					}else {
+						setEmailError({ borderColor: 'red' });
 					}
 					
 				}}>
@@ -117,6 +133,7 @@ const UserEmail = () => {
 
 					<Text style={styles.textFooter}>Estou aqui para te ajudar com seus{'\n'}resíduos eletrônicos.</Text>
 			</Animated.View>
+			{renderErrorInputBox()}
 		  </View>
 		
 	);
@@ -284,8 +301,12 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		fontFamily: 'Roboto-Italic',
 		marginLeft: 40,
-		marginTop: 40
-		
+		marginTop: 40	
+	},
+	errorText: {
+		fontSize: 15,
+		fontFamily: 'Roboto-Medium',
+		color: 'white'
 	}
 });
 
