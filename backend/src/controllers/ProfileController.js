@@ -1,7 +1,5 @@
 const connection = require('../database/connection');
-const bcrypt = require('bcrypt');
-const path = require('path');
-const fs = require('fs');
+const crypto = require('crypto');
 
 module.exports = {
 
@@ -26,21 +24,23 @@ module.exports = {
 				'longitude').first();
 
 
-		var userAvatarDir = await connection('uploads').where('user_id', userId)
-		.select('key').first();
+		var userAvatarUrl = await connection('uploads').where('user_id', userId)
+		.select('url').first();
 
-		if (!userAvatarDir) {
-			userAvatarDir = null;
-			return res.json({user, userAvatarDir});
+		if (!userAvatarUrl) {
+			userAvatarUrl = null;
+			return res.json({user, userAvatarUrl});
 		}
 
-		const userAvatar = path.resolve(`../../temp/uploads/user/${userAvatarDir.key}`);
+		const userAvatar = userAvatarUrl.url;
+		
 		return res.json({user, userAvatar});
 
 	},
 
 	updateUserAvatar: async (req, res) => {
 		const userId = req.headers.authorization;
+		const {url} = req.body;
 		const userDB = await connection('users').where('id', userId)
 		.select('id').first();
 
@@ -48,23 +48,21 @@ module.exports = {
 			return res.status(400).json({error: 'Usuário não encontrado'});
 		}
 
-		const oldAvatarKey = await connection('uploads').where('user_id', userId)
-		.select('key').first();
+		const userUrl = await connection('uploads').where('user_id',userDB.id).select('url')
+		.first();
 
-		try{
-			await fs.unlink(`./temp/uploads/users/${oldAvatarKey.key}`, function(err){
-				if(err) throw err;
+		if(!userUrl){
+			const imageID = await crypto.randomBytes(5).toString("HEX");
+			await connection('uploads').insert({
+				id: imageID,
+				url,
+				user_id: userDB.id
 			});
-		}catch{
-			return res.json({error:"Erro ao atualizar a imagem."});
+			return res.json({succes: 'Não foi encontrada uma imagem no banco de dados, então essa imagem foi inserida automaticamente'});
 		}
-		
-		const imgName = req.file.originalname;
-		const size = req.file.size;
-		const key = req.file.filename;
 
 	    await connection('uploads').where('user_id', userDB.id)
-		.update({ imgName: imgName, size: size, key: key });
+		.update({ url });
 
 		return res.json({sucess: 'Avatar atualizado'}); 
 	},
@@ -94,21 +92,22 @@ module.exports = {
 				'latitude', 
 				'longitude').first();
 
-		var companyAvatarDir = await connection('uploads').where('company_id', companyId)
-		.select('key').first();
+		var companyAvatarUrl = await connection('uploads').where('company_id', companyId)
+		.select('url').first();
 
-		if (!companyAvatarDir) {
-			companyAvatarDir = null;
-			return res.json({company, companyAvatarDir});
+		if (!companyAvatarUrl) {
+			companyAvatarUrl = null;
+			return res.json({company, companyAvatarUrl});
 		}
 
-		const companyAvatar = path.resolve(`../../temp/uploads/companies/${companyAvatarDir.key}`);
+		const companyAvatar = companyAvatarUrl.url;
 		return res.json({company, companyAvatar});
 
 	},
 
 	updateCompanyAvatar: async (req, res) => {
-		const companyId = req.headers.authorization; 
+		const companyId = req.headers.authorization;
+		const {url} = req.body; 
 		const companyDB = await connection('companies').where('id', companyId)
 		.select('id').first();
 
@@ -116,22 +115,23 @@ module.exports = {
 			return res.status(400).json({error: 'Empresa não encontrada'});
 		}
 
-		const oldCompanyKey = await connection('uploads').where('company_id', companyId)
-		.select('key').first();
+		const companyUrl = await connection('uploads').where('company_id',companyDB.id).select('url')
+		.first();
 
-			try{
-				fs.unlink(`./temp/uploads/companies/${oldCompanyKey.key}`, function(err){
-					if(err) throw err;
-				});
-			}catch{
-				return res.status(401).json({error:"Erro ao atualizar a imagem."});
-			}
+		if(!companyUrl){
+			const companyImageID = await crypto.randomBytes(5).toString("HEX");
 
-		const imgName = req.file.originalname;
-		const size = req.file.size;
-		const key = req.file.filename;
+			await connection('uploads').insert({
+				id: companyImageID,
+				url,
+				company_id: companyDB.id
+			});
+
+			return res.json({succes: 'Não foi encontrada uma imagem no banco de dados, então essa imagem foi inserida automaticamente'});
+		}
+
 		 await connection('uploads').where('company_id', companyDB.id)
-		.update({ imgName: imgName, size: size, key: key });
+		.update({ url });
 
 		return res.json({sucess: 'Avatar atualizado'}); 
 	},
@@ -158,15 +158,15 @@ module.exports = {
 				'latitude', 
 				'longitude').first();
 
-		var pointAvatarDir = await connection('uploads').where('point_id', pointId)
-		.select('key').first();
+		var pointAvatarUrl = await connection('uploads').where('point_id', pointId)
+		.select('url').first();
 
-		if (!pointAvatarDir) {
-			pointAvatarDir = null;
-			return res.json({point, pointAvatarDir});
+		if (!pointAvatarUrl) {
+			pointAvatarUrl = null;
+			return res.json({point, pointAvatarUrl});
 		}
 
-		const pointAvatar = path.resolve(`../../temp/uploads/points/${pointAvatarDir.key}`);
+		const pointAvatar = pointAvatarUrl.url;
 
 		return res.json({point, pointAvatar});
 
@@ -174,6 +174,7 @@ module.exports = {
 
 	updatePointAvatar: async (req, res) => {
 		const pointId = req.headers.authorization; 
+		const {url} = req.body;
 		const pointDB = await connection('discarts_points').where('id', pointId)
 		.select('id').first();
 
@@ -181,24 +182,23 @@ module.exports = {
 			return res.status(400).json({error: 'Ponto de coleta não encontrado'});
 		}
 
-		const oldPointAvatarKey = await connection('uploads').where('point_id', pointId)
-		.select('key').first();
+		const pointUrl = await connection('uploads').where('point_id',pointDB.id).select('url')
+		.first();
 
-		try{
-			await fs.unlink(`./temp/uploads/points/${oldPointAvatarKey.key}`, function(err){
-				if(err) throw err;
+		if(!pointUrl){
+			const pointImageID = await crypto.randomBytes(5).toString("HEX");
+
+			await connection('uploads').insert({
+				id: pointImageID,
+				url,
+				point_id:pointDB.id
 			});
-		}
-		catch{
-			return res.status(401).json({error:"Erro ao atualizar a imagem."});
+
+			return res.json({succes: 'Não foi encontrada uma imagem no banco de dados, então essa imagem foi inserida automaticamente'});
 		}
 
-
-		const imgName = req.file.originalname;
-		const size = req.file.size;
-		const key = req.file.filename;
 		await connection('uploads').where('point_id', pointDB.id)
-		.update({ imgName: imgName, size: size, key: key });
+		.update({ url });
 
 		return res.json({sucess: 'Avatar atualizado'}); 
 		

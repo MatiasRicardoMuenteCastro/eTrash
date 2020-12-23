@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authConfig = require('../config/auth');
 const fs = require('fs');
-const path = require('path');
 const mailer = require('../modules/mailer');
 
 function hash(password){
@@ -26,11 +25,11 @@ module.exports = {
 		const [count] = await connection('users').count();
 		res.header('X-Total-Count', count['count']);
 		
-		const usersAvatarsKey = await connection('uploads').whereNotNull('user_id').select('key');
+		const usersAvatarsUrl = await connection('uploads').whereNotNull('user_id').select('url');
 
-		const usersAvatars = usersAvatarsKey.map(function(item){
-			const key = item.key;
-			const avatar = path.resolve(`../../temp/uploads/users/${key}`);
+		const usersAvatars = usersAvatarsUrl.map(function(item){
+			const url = item.url;
+			const avatar = url;
 			return avatar;
 		}); 
 		return res.json({users, avatar: usersAvatars});
@@ -102,14 +101,10 @@ module.exports = {
 			return res.status(401).json({error: 'Senha incorreta'});
 		}
 
-		const oldAvatarKey = await connection('uploads').where('user_id', userId).select('key')
+		const oldAvatarUrl = await connection('uploads').where('user_id', userId).select('url')
 		.first();
 		
-		if(oldAvatarKey){
-			await fs.unlink(`./temp/uploads/users/${oldAvatarKey.key}`, function(err){
-				if(err) throw err;
-			});
-			
+		if(oldAvatarUrl){
 			await connection('uploads').where('user_id', userId).delete();
 		}
 		await connection('feedback').where('user_id',userId).delete();
@@ -160,23 +155,26 @@ module.exports = {
 	
 	upload: async (req, res) => {
 		const userId = req.headers.authorization;
+		const {url} = req.body;
 		const userIDDB = await connection('users').where('id', userId)
 		.select('id').first();
 
 		if (!userIDDB) {
 			return res.status(400).json({error: 'Usuário não encontrado.'})
 		}
+
+		const userUrl = await connection('uploads').where('user_id',userIDDB.id).select('url').first();
+
+		if(userUrl){
+			return res.status(401).json({error: 'Imagem de usuário já existente.'});
+		}
 		
 		const id = crypto.randomBytes(5).toString('HEX');
 		const user_id = userIDDB.id;
-		const imgName = req.file.originalname;
-		const size = req.file.size;
-		const key = req.file.filename;
+
 		await connection('uploads').insert({
 			id,
-			imgName,
-			size,
-			key,
+			url,
 			user_id
 		}); 
 		return res.json({sucess:"Imagem carregada com sucesso!" });

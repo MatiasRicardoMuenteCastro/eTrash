@@ -21,6 +21,19 @@ function generateToken(params = {}){
 	});
 }
 
+function ImagesOrganize(IDArray,uploadsArray){
+    const IDMapping = IDArray.map(function(id){
+        const uploadsUrlFilter = uploadsArray.map(function(item){
+            if(id === item.company_id){
+                const url = item.url
+                return (url);
+            }
+        });
+        return uploadsUrlFilter;
+    })
+    return IDMapping;
+}
+
 module.exports = {
    async index(request, response){
         const companies = await connection('companies')
@@ -40,11 +53,11 @@ module.exports = {
         const [count] = await connection('companies').count();
         response.header('Total-Companies-Count', count['count']);
 
-        const companiesAvatarsKey = await connection('uploads').whereNotNull('company_id').select('key');
+        const companiesAvatarsUrl = await connection('uploads').whereNotNull('company_id').select('url');
         
-        const companiesAvatars = companiesAvatarsKey.map(function(item){
-            const key = item.key;
-            const avatar = path.resolve(`../../temp/uploads/companies/${key}`);
+        const companiesAvatars = companiesAvatarsUrl.map(function(item){
+            const url = item.url;
+            const avatar = url;
             return avatar;
         }); 
         return response.json({companies, avatar: companiesAvatars});
@@ -55,6 +68,7 @@ module.exports = {
               cnpj, 
               passwordInput, 
               collector,
+              urlSchedule,
               country,
               city,
               region,
@@ -105,6 +119,12 @@ module.exports = {
             latitude, 
             longitude
         });
+        if(urlSchedule !== undefined){
+            await connection('company_url').insert({
+                company_id: id,
+                url: urlSchedule
+            });
+        }   
 
         return response.json({
             welcome: `Bem vindo: ${name}`,
@@ -138,13 +158,11 @@ module.exports = {
             return response.status(401).json({error: 'Senha Inválida'});
         }
 
-        const oldCompanyKey = await connection('uploads').where('company_id', companyId)
-        .select('key').first();
+        const oldCompanyUrl = await connection('uploads').where('company_id', companyId)
+        .select('url').first();
 
-        if(oldCompanyKey){
-            await fs.unlink(`./temp/uploads/companies/${oldCompanyKey.key}`, function(err){
-			     if(err) throw err;
-            });
+        if(oldCompanyUrl){
+            await connection('uploads').where('company_id',companyIdBD.id).delete();
         }   
         
         const companyCollector = await connection('companies').where('collector', true)
@@ -153,6 +171,7 @@ module.exports = {
         if (companyCollector) {
             await connection('schedule').where('company_collector_id', companyIdBD.id).delete();
         }
+        await connection('company_url').where('company_id',companyIdBD.id).delete();
         await connection('feedback').where('company_id',companyIdBD.id).delete();
         await connection('uploads').where('company_id', companyIdBD.id).delete();
         await connection('schedule').where('company_id', companyIdBD.id).delete();
@@ -207,23 +226,26 @@ module.exports = {
     
     async upload(request, response){
         const companyId = request.headers.authorization;
+        const {url} = request.body;
         const companyIDDB = await connection('companies').where('id', companyId)
         .select('id').first();
 
         if (!companyIDDB) {
             return response.status(400).json({error: 'Empresa não encontrado.'})
         }
-        
+
+        const companyUrl = await connection('uploads').where('company_id',companyIDDB.id).select('url').first();
+
+        if(companyUrl){
+            return response.json({error: 'Imagem de empresa já existente.'});
+        }
+
         const id = crypto.randomBytes(5).toString('HEX');
         const company_id = companyIDDB.id;
-        const imgName = request.file.originalname;
-        const size = request.file.size;
-        const key = request.file.filename;
+
         await connection('uploads').insert({
             id,
-            imgName,
-            size,
-            key,
+            url,
             company_id
         }); 
         return response.json({sucess:"Imagem carregada com sucesso!" });
@@ -289,6 +311,42 @@ module.exports = {
         .select('cnpj','name', 'email', 'discarts', 'activity', 'country', 'city', 'region', 'neightborhood', 'phone', 'latitude', 'longitude');
 
         return response.json({solicitations, companySolicitation});
+    },
+    async companiesCollectorGet(request,response){ 
+        const companyFind = await connection('companies').where('collector',true).select('id','name','email','discarts','activity','collector','country','city','region','neightborhood','phone');
+
+        if(!companyFind){
+            return response.json({error:'Nenhuma companhia coletora foi encontrada'});
+        }
+
+        const imageFind = await connection('uploads').whereNotNull('company_id').select('*');
+
+        const idArray = companyFind.map(function (item){
+            return item.id;
+        });
+
+        const urlScheduleFind = await connection('company_url').select('*');
+        const urlSchedule = ImagesOrganize(idArray,urlScheduleFind);
+
+        const urlFilter = urlSchedule.map(function (item){
+            for(let x of item){
+                if(x !== undefined){
+                    return(x);
+                }
+            }
+        });
+
+        const images = ImagesOrganize(idArray,imageFind);
+        const imagesFilter = images.map(function (item){
+            for(let x of item){
+                if(x !== undefined){
+                    return(x);
+                }
+            }
+        });
+        return response.json({companyFind,urlFilter,imagesFilter});
+
+
     },
     async scheduleDelete(request, response){
         const id = request.headers.authorization;

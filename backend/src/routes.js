@@ -33,6 +33,4 @@ routes.post('/point/password/recovery',PointController.recovery);
 
 routes.put('/point/password/reset',PointController.reset);
 
-
-
 module.exports = routes;

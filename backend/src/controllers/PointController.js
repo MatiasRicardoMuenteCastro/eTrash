@@ -6,6 +6,10 @@ const authConfig = require('../config/auth');
 const fs = require('fs');
 const path = require('path');
 const mailer = require('../modules/mailer');
+const itertools = require('itertools');
+const { CONNREFUSED } = require('dns');
+const { compactObject } = require('itertools/custom');
+const { cpuUsage } = require('process');
 
 function hash(password){
 	const saltRounds = 12;
@@ -19,21 +23,41 @@ function generateToken(params = {}){
 		expiresIn:86400,
 	});
 }
+function pointsImagesOrganize(pointsIDArray,uploadsArray){
+    const pointsIDMapping = pointsIDArray.map(function(id){
+        const uploadsUrlFilter = uploadsArray.map(function(item){
+            if(id === item.point_id){
+                const url = item.url
+                return (url);
+            }
+        });
+        return uploadsUrlFilter;
+    })
+    return pointsIDMapping;
+}
 
 module.exports = {
     index: async (request, response) => {
-        const points = await connection('discarts_points').select('name','rua','numero','numero','discarts','country','city','region');
+        const points = await connection('discarts_points').select('id','name','rua','numero','numero','discarts','country','city','region','longitude','latitude');
         const [count] = await connection('companies').count();
         response.header('Total-Companies-Count', count['count']);
 
-        const pointsAvatarsKey = await connection('uploads').whereNotNull('point_id').select('key');
+        const pointsIDArray = points.map(function(item){
+            return item.id;
+        });
 
-        const pointsAvatars = pointsAvatarsKey.map(function(item){
-            const key = item.key;
-            const avatar = path.resolve(`../../temp/uploads/points/${key}`);
-            return avatar;
-        }); 
-        return response.json({points, avatar: pointsAvatars});
+        const uploadsArray = await connection('uploads').whereNotNull('point_id').select('point_id','url');
+        
+        const imagesOrganize = pointsImagesOrganize(pointsIDArray,uploadsArray);
+
+        const pointsAvatars = imagesOrganize.map(function(item){
+            for(let x of item){
+                if(x !== undefined){
+                    return x;
+                };
+            }
+        });
+        return response.json({points,avatar: pointsAvatars})
     },
    	
    	create: async (request, response) => {
@@ -109,14 +133,10 @@ module.exports = {
         	return response.status(400).json({error: 'Senha inválida'});
         }
 
-        const oldPointKey = await connection('uploads').where('point_id',  point_id).select('key')
+        const oldPointUrl = await connection('uploads').where('point_id',  point_id).select('url')
         .first();
         
-        if(oldPointKey){
-            await fs.unlink(`./temp/uploads/points/${oldPointKey.key}`, function(err){
-			     if(err) throw err;
-            });
-            
+        if(oldPointUrl){            
             const imageID = await connection('uploads').select('id').where('point_id',point_id).first();
 
             await connection('uploads').where('id',imageID.id).delete();
@@ -176,23 +196,26 @@ module.exports = {
     
     upload: async(request, response) => {
         const point_id = request.headers.authorization;
+        const {url} = request.body;
         const pointIDDB = await connection('discarts_points').where('id', point_id)
         .select('id').first();
 
         if (!pointIDDB) {
             return response.status(400).json({error: 'Ponto de coleta não encontrado.'})
         }
+
+        const pointUrl = await connection('uploads').where('point_id',pointIDDB.id).select('url').first();
+
+        if(pointUrl){
+            return response.json({error: 'Imagem do ponto já existente.'});
+        }
         
         const id = crypto.randomBytes(5).toString('HEX');
         const newPointId = pointIDDB.id;
-        const imgName = request.file.originalname;
-        const size = request.file.size;
-        const key = request.file.filename;
+        
         await connection('uploads').insert({
             id,
-            imgName,
-            size,
-            key,
+            url,
             point_id: newPointId
         }); 
         return response.json({sucess:"Imagem carregada com sucesso!" });
